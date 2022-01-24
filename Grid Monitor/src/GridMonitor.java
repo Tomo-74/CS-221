@@ -16,6 +16,7 @@ import java.util.Scanner;
  * @author Thomas Lonowski
  * @version GridMonitor 1.0
  * @date 17 January 2022
+ * @GitHubRepo Tomo-74/EclipseProjects
  */
 public class GridMonitor implements GridMonitorInterface {
 	////////////////////////
