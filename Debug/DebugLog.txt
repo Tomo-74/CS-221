@@ -1,0 +1,12 @@
+/////////////////////
+// Thomas Lonowski
+// CS 221	2/1/2022
+// Debug assignment
+// Step-through log
+/////////////////////
+
+Read through the SimpleSet Interface and the ArraySet Class. Briefly looked at the SetTester Class.
+Ran the SetTester Class (without changing any code). Run results: 51/111 tests run (32 passed,
+19 failed). This is a much better result than I expected to get from the initial run. Is this
+because we were given a good toString method, whereas the one demonstrated in class was broken?
+
