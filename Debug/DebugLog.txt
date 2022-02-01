@@ -1,9 +1,9 @@
-/////////////////////
+////////////////////
 // Thomas Lonowski
 // CS 221	2/1/2022
 // Debug assignment
 // Step-through log
-/////////////////////
+////////////////////
 
 Read through the SimpleSet Interface and the ArraySet Class. Briefly looked at the SetTester Class.
 Ran the SetTester Class (without changing any code). Run results: 51/111 tests run (32 passed,
