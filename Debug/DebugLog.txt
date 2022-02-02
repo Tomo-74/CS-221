@@ -6,7 +6,22 @@
 /////////////////////
 
 Read through the SimpleSet Interface and the ArraySet Class. Briefly looked at the SetTester Class.
-Ran the SetTester Class (without changing any code). Run results: 51/111 tests run (32 passed,
-19 failed). This is a much better result than I expected to get from the initial run. Is this
-because we were given a good toString method, whereas the one demonstrated in class was broken?
+Ran the SetTester Class (without changing any code). RUN RESULTS: 'Total Tests Run: 51 of 111, Passed: 32,
+Failed: 19' This is a much better result than I expected to get from the initial run. This is because we 
+were given a good toString method, whereas the one demonstrated in class was broken.
 
+Added breakpoint on ArraySet line 81. Stepped into NoSuchElementException Class. Step returned.
+Stepped into testRemove() method. Step returned. Moved breakpoint to ArraySet line 64 (beginning of
+problematic method. Stepped into the method. Noticed that the first while method is skipped, probably
+because of the 'i < rear' condition. Changed it to 'i <= rear'. After doing this, the debugger steps
+into the first while loop, but a NullPointerException is still thrown because the ArraySet is empty.
+Changed the while loop condition back to 'i < rear'. The test passes. I've been debugging in the wrong
+area. I should have set my break point in the SetTester Class.
+
+Added breakpoint on SetTester line 153 (the emptySet_addA_A_testRemoveB() method). Stepped into emptySet_addA_A().
+Stepped into the remove() method. The first while loop is being skipped when it shouldn't be. Stepped into the add()
+method and incremented 'rear' by 1 when a new element is added. Stepped into the remove() method to test if my 
+change solved the problem. The first while loop is now entered because 'i < rear == true'. This solved the
+problem and the test now passes. NEW RUN RESULTS: 'Total Tests Run: 93 of 111,  Passed: 82,  Failed: 11'
+
+Set breakpoint on SetTester line 299 (problematic method is AB_removeA_B()).
