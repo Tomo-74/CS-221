@@ -1,9 +1,9 @@
-/////////////////////
+//////////////////////
 // Thomas Lonowski
-// CS 221	2/1/2022
+// CS 221	2/3/2022
 // Debug assignment
 // Step-through log
-/////////////////////
+//////////////////////
 
 Read through the SimpleSet Interface and the ArraySet Class. Briefly looked at the SetTester Class.
 Ran the SetTester Class (without changing any code). RUN RESULTS: 'Total Tests Run: 51 of 111, Passed: 32,
@@ -21,7 +21,14 @@ area. I should have set my break point in the SetTester Class.
 Added breakpoint on SetTester line 153 (the emptySet_addA_A_testRemoveB() method). Stepped into emptySet_addA_A().
 Stepped into the remove() method. The first while loop is being skipped when it shouldn't be. Stepped into the add()
 method and incremented 'rear' by 1 when a new element is added. Stepped into the remove() method to test if my 
-change solved the problem. The first while loop is now entered because 'i < rear == true'. This solved the
-problem and the test now passes. NEW RUN RESULTS: 'Total Tests Run: 93 of 111,  Passed: 82,  Failed: 11'
+change solved the problem. The first while loop is now entered because 'i < rear == true'. This fixed the first bug.
+NEW RUN RESULTS: 'Total Tests Run: 93 of 111,  Passed: 82,  Failed: 11'
 
-Set breakpoint on SetTester line 299 (problematic method is AB_removeA_B()).
+Added breakpoint on SetTester line 299 (problematic method is AB_removeA_B()). Stepped into the AB_removeA_B()
+method. Stepped into the remove() method. Noticed that the second while loop is causing an IndexOutOfBounds
+Exception when shifting the set elements forward. Changed the while loop condition to 'i < rear - 1'. This
+fixed the second bug. NEW RUN RESULTS: 'Total Tests Run: 111 of 111,  Passed: 100,  Failed: 11'.
+
+Added breakpoint on SetTester line 111. Stepped into the emptySet() method. Step returned. Stepped into the
+testIsEmpty() method. Stepped into the isEmpty() method. Changed the return statement from 'rear > 0' to
+'rear == 0'. This fixed the third bug. NEW RUN RESULTS: 'Total Tests Run: 111 of 111,  Passed: 111,  Failed: 0'.

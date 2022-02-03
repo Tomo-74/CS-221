@@ -37,7 +37,7 @@ public class ArraySet<T> implements SimpleSet<T> {
 
 	@Override
 	public boolean isEmpty() {
-		return (rear > 0);	// Here's a bug, must add a ! operator to make this return statement valid
+		return (rear == 0);	// Third bug was here. Solved by changing the return statement from 'rear > 0' to 'rear == 0'
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class ArraySet<T> implements SimpleSet<T> {
 				retVal = setArray[i];
 				//shift all following elements one space forward
 				//so there are no gaps in the array
-				while (i < rear) {
+				while (i < rear - 1) {	// Second bug fixed by adding -1 to the condition to avoid IndexOutOfBounds
 					setArray[i] = setArray[i+1];
 					i++;
 				}
