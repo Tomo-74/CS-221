@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 @SuppressWarnings("unused")
@@ -24,10 +25,7 @@ public class FormatChecker {
 		}
 		fileScan.close();
 	}
-	
-	private static void printFileName(String[] files, int index) {
-		
-	}
+
 	
 	/**
 	 * 
@@ -37,13 +35,12 @@ public class FormatChecker {
 	public static void main(String[] files) {
 		if(files.length == 0) {	// Check if an input file is provided.
 			System.out.println("Input file not provided.");
-		} 
-		else {
+		} else {
 			for(int index = 0; index < files.length; index++) {	// Scan each provided file
 				numRows = 0;	// Reset for each file
 				numCols = 0;
 				
-				if(index != 0) {System.out.println();}	// Print a blank line before each file (excluding the first)
+				if(index != 0) { System.out.println(); }	// Print a blank line before each file (excluding the first)
 				
 				// Find the current file's name in the file path:
 				splitFilePath = files[index].split("\\\\");
@@ -52,24 +49,19 @@ public class FormatChecker {
 				
 				try {
 					Scanner fileScan  = new Scanner(new FileReader(files[index]));
-					String formatLine = fileScan.nextLine();	// The first line of the file, which specifies the number of rows and columns in the grid
+					String fileFormat = fileScan.nextLine();	// The first line of the file, which specifies the number of rows and columns in the grid
 					
-					if(formatLine.length() == 3 && formatLine.substring(1, 2).equals(" ")) {	// Check that the first line of the file is correctly formatted
-						try {
-							numRows = Integer.parseInt(formatLine.substring(0, 1));
-							numCols = Integer.parseInt(formatLine.substring(2, 3));
-						} catch(IndexOutOfBoundsException e) {
-							System.out.println(e.toString());
-						}						
+					if(fileFormat.length() == 3 && fileFormat.substring(1, 2).equals(" ")) {	// Check that the first line of the file is correctly formatted
+						numRows = Integer.parseInt(fileFormat.substring(0, 1));
+						numCols = Integer.parseInt(fileFormat.substring(2, 3));				
 					} else {
-							System.out.println("First line does not contain two white-space-separated positive integers");
-							System.out.println("INVALID");
-							continue;
+						// Throw and catch custom exception
+						System.out.println("First line does not contain two white-space-separated positive integers");
+						System.out.println("INVALID");
+						continue;
 					}
-					// -- Debug -- 
-					// System.out.println(numRows + " " + numCols);
-					// PrintFileInput(fileScan, numRows, numCols);
 					
+					// Change to for-loop:
 					while (fileScan.hasNextLine()) {
 						String line = fileScan.nextLine();
 						if (line.length() > 0) {
@@ -82,16 +74,29 @@ public class FormatChecker {
 							lineScan.close();
 						}
 					}
-				}	
-				catch(FileNotFoundException e) {	// If the specified file cannot be found
+				} catch(FileNotFoundException e) {	// If the specified file cannot be found
 					System.out.println(e.toString());
+					System.out.println("INVALID");
+					continue;
+				} catch(NumberFormatException e) {	// Thrown if the file input cannot be parsed to an int
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+					continue;
+				} catch(IndexOutOfBoundsException e) {	// Is this Exception check even necessary?
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+					continue;
+				} catch(InputMismatchException e) {	// For when a double appears on the first line - necessary?
+					
 				}
 				
 				if(rowCounter != numRows || colCounter != numCols) {
 					System.out.println("Fewer rows or columns than specified.");
 					System.out.println("INVALID");
+					continue;
 				}
-			}	// end for loop
-		}	// end else statement
+				System.out.println("VALID");	// Success
+			}
+		}
 	}
 }
