@@ -43,9 +43,12 @@ public class FormatChecker {
 				numRows = 0;	// Reset for each file
 				numCols = 0;
 				
+				if(index != 0) {System.out.println();}	// Print a blank line before each file (excluding the first)
+				
 				// Find the current file's name in the file path:
 				splitFilePath = files[index].split("\\\\");
-				fileName = splitFilePath[splitFilePath.length - 1];				
+				fileName = splitFilePath[splitFilePath.length - 1];		
+				System.out.println(fileName);
 				
 				try {
 					Scanner fileScan  = new Scanner(new FileReader(files[index]));
@@ -55,15 +58,13 @@ public class FormatChecker {
 						try {
 							numRows = Integer.parseInt(formatLine.substring(0, 1));
 							numCols = Integer.parseInt(formatLine.substring(2, 3));
-						}
-						catch(Exception e) {
+						} catch(IndexOutOfBoundsException e) {
 							System.out.println(e.toString());
-						}
-					}
-					else {
-						System.out.println(fileName);
-						System.out.println("First line does not contain two white-space-separated positive integers");
-						System.out.println("INVALID");
+						}						
+					} else {
+							System.out.println("First line does not contain two white-space-separated positive integers");
+							System.out.println("INVALID");
+							continue;
 					}
 					// -- Debug -- 
 					// System.out.println(numRows + " " + numCols);
@@ -87,11 +88,9 @@ public class FormatChecker {
 				}
 				
 				if(rowCounter != numRows || colCounter != numCols) {
-					System.out.println(fileName);
 					System.out.println("Fewer rows or columns than specified.");
 					System.out.println("INVALID");
 				}
-				System.out.println();	// Print blank line between each file
 			}	// end for loop
 		}	// end else statement
 	}
