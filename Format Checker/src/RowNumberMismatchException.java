@@ -1,14 +1,7 @@
-public class RowNumberMismatchException extends Exception {
-	public RowNumberMismatchException() {	// No-arg constructor
-		super();
-	}
-	
+import java.io.IOException;
+
+public class RowNumberMismatchException extends IOException {
 	public RowNumberMismatchException(String message) {	// Exception message constructor
 		super(message);
-	}
-	
-	@Override
-	public String toString() {
-		return super.toString();
 	}
 }

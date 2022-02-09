@@ -38,9 +38,6 @@ public class FormatChecker {
 			System.out.println("Input file(s) not provided.");
 		} else {
 			for(int index = 0; index < files.length; index++) {	// Scan each provided file
-				numRows = 0;	// Reset for each file
-				numCols = 0;
-				
 				if(index != 0) { System.out.println(); }	// Print a blank line before each file (excluding the first)
 				
 				// Find the current file's name in the file path:
@@ -49,16 +46,13 @@ public class FormatChecker {
 				
 				try {
 					Scanner fileScan  = new Scanner(new FileReader(files[index]));
-					String fileFormat = fileScan.nextLine();	// The first line of the file, which specifies the number of rows and columns in the grid
+					String fileFormatLine = fileScan.nextLine();	// The first line of the file, which specifies the number of rows and columns in the grid
 					
-					if(fileFormat.length() == 3 && fileFormat.substring(1, 2).equals(" ")) {	// Check that the first line of the file is correctly formatted
-						numRows = Integer.parseInt(fileFormat.substring(0, 1));
-						numCols = Integer.parseInt(fileFormat.substring(2, 3));				
+					if(fileFormatLine.length() != 3 && !fileFormatLine.substring(1, 2).equals(" ")) {
+						throw new InvalidFirstLineException("First line of file does not contain two white-space-separated positive integers");						
 					} else {
-						// Generate custom Exception and throw it here. Catch down below.
-						System.out.println("First line does not contain two white-space-separated positive integers");
-						System.out.println("INVALID");
-						continue;
+						numRows = Integer.parseInt(fileFormatLine.substring(0, 1));
+						numCols = Integer.parseInt(fileFormatLine.substring(2, 3));
 					}
 					
 					while (fileScan.hasNextLine()) {
@@ -84,6 +78,10 @@ public class FormatChecker {
 					System.out.println(e.toString());
 					System.out.println("INVALID");
 					continue;
+				} catch(InvalidFirstLineException e) {
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+					continue;
 				} catch(NumberFormatException e) {	// Thrown if the file input cannot be parsed to an int
 					System.out.println(e.toString());
 					System.out.println("INVALID");
@@ -102,6 +100,9 @@ public class FormatChecker {
 					System.out.println(e.toString());
 					System.out.println("INVALID");
 					continue;
+				} finally {
+					rowCounter = 0;	// Reset counter variables after reading through each file
+					colCounter = 0;
 				}
 				System.out.println("VALID");	// If no Exception is thrown, the file is valid (good format and data)
 			}
