@@ -8,10 +8,11 @@ import java.util.Scanner;
 public class FormatChecker {
 	private static int numRows;
 	private static int numCols;
-	private static int rowCounter = 0;
-	private static int colCounter = 0;
-	private static String[] splitFilePath;
+	private static int rowCounter;
+	private static int colCounter;
 	private static String fileName;
+	private static boolean correctNumRows = false;
+	private static boolean correctNumCols = false;
 	
 	private void printFile(Scanner fileScan, int numRows, int numCols) {
 		for(int i = 0; i < numRows; i++) {		
@@ -34,7 +35,7 @@ public class FormatChecker {
 	 */
 	public static void main(String[] files) {
 		if(files.length == 0) {	// Check if an input file is provided.
-			System.out.println("Input file not provided.");
+			System.out.println("Input file(s) not provided.");
 		} else {
 			for(int index = 0; index < files.length; index++) {	// Scan each provided file
 				numRows = 0;	// Reset for each file
@@ -43,8 +44,7 @@ public class FormatChecker {
 				if(index != 0) { System.out.println(); }	// Print a blank line before each file (excluding the first)
 				
 				// Find the current file's name in the file path:
-				splitFilePath = files[index].split("\\\\");
-				fileName = splitFilePath[splitFilePath.length - 1];		
+				fileName = files[index];	
 				System.out.println(fileName);
 				
 				try {
@@ -55,25 +55,31 @@ public class FormatChecker {
 						numRows = Integer.parseInt(fileFormat.substring(0, 1));
 						numCols = Integer.parseInt(fileFormat.substring(2, 3));				
 					} else {
-						// Throw and catch custom exception
+						// Generate custom Exception and throw it here. Catch down below.
 						System.out.println("First line does not contain two white-space-separated positive integers");
 						System.out.println("INVALID");
 						continue;
 					}
 					
-					// Change to for-loop:
 					while (fileScan.hasNextLine()) {
-						String line = fileScan.nextLine();
-						if (line.length() > 0) {
-							rowCounter++;
-							Scanner lineScan = new Scanner(line); //Scanner to break current line into tokens
-							while (lineScan.hasNext()) {
-								colCounter++;
-								lineScan.next();
-							}
-							lineScan.close();
+						String row = fileScan.nextLine();
+						rowCounter++;
+						Scanner rowScan = new Scanner(row); //Scanner to break current line into tokens
+						while (rowScan.hasNext()) {							
+							colCounter++;
+							rowScan.next();
 						}
+						if(numCols != colCounter) {	// Check that the file has the specified number of columns
+							throw new ColumnNumberMismatchException("Specified number of columns does not match actual number of columns");
+						}
+						// System.out.println(colCounter);
+						colCounter = 0;
+						rowScan.close();	// close rowScan earlier??
 					}
+					if(numRows != rowCounter) {	// Check that the file has the specified number of files
+						throw new RowNumberMismatchException("Specified number of rows does not match actual number of rows");
+					}
+					
 				} catch(FileNotFoundException e) {	// If the specified file cannot be found
 					System.out.println(e.toString());
 					System.out.println("INVALID");
@@ -88,14 +94,16 @@ public class FormatChecker {
 					continue;
 				} catch(InputMismatchException e) {	// For when a double appears on the first line - necessary?
 					
-				}
-				
-				if(rowCounter != numRows || colCounter != numCols) {
-					System.out.println("Fewer rows or columns than specified.");
+				} catch(ColumnNumberMismatchException e) {
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+					continue;
+				} catch(RowNumberMismatchException e) {
+					System.out.println(e.toString());
 					System.out.println("INVALID");
 					continue;
 				}
-				System.out.println("VALID");	// Success
+				System.out.println("VALID");	// If no Exception is thrown, the file is valid (good format and data)
 			}
 		}
 	}
