@@ -1,7 +1,7 @@
 import java.io.IOException;
 
-public class InvalidFirstLineException extends IOException {
-	public InvalidFirstLineException(String message) {
+public class ColumnMismatchException extends IOException {
+	public ColumnMismatchException(String message) {
 		super(message);
 	}
 	
