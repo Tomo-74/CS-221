@@ -2,6 +2,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class FormatChecker {
 	private static int numRows;
@@ -15,6 +17,7 @@ public class FormatChecker {
 	 * @param args: input files specified through the command line
 	 * @throws 
 	 */
+	@SuppressWarnings("resource")
 	public static void main(String[] files) {
 		try { 
 			if(files.length == 0) {	// Check if an input file is provided.
@@ -32,11 +35,18 @@ public class FormatChecker {
 																					// Throws FileNotFoundException if the file path is invalid
 					String fileFormatLine = fileScan.nextLine();	// The first line of the file, which specifies the number of rows and columns in the file
 					
-					if(fileFormatLine.length() != 3 || !fileFormatLine.substring(1, 2).equals(" ")) {
+					Pattern pattern = Pattern.compile("^(\\D*\\d){2}\\D*$");
+					Matcher matcher = pattern.matcher(fileFormatLine);
+					boolean twoNumsFound = matcher.find();
+					// int didgetLocation = matcher.
+					
+					if(!fileFormatLine.contains("\s")) {
 						throw new InvalidFirstLineException("First line of file does not contain two white-space-separated positive integers");						
+					} else if(!twoNumsFound) {
+						throw new InvalidFirstLineException("First line of file does not contain two integers.");
 					} else {
-						numRows = Integer.parseInt(fileFormatLine.substring(0, 1));	// Throws NumberFormatException if not parseable
-						numCols = Integer.parseInt(fileFormatLine.substring(2, 3));
+						numRows = Integer.parseInt(fileFormatLine.strip().substring(0, 1));	// Throws NumberFormatException if not parseable
+						numCols = Integer.parseInt(fileFormatLine.strip().substring(2, 3));
 					}
 					
 					while (fileScan.hasNextLine()) {
@@ -45,13 +55,13 @@ public class FormatChecker {
 						Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens
 						while (rowScan.hasNext()) {	// While there are still characters in the row...						
 							colCounter++;	// Track the number of characters (columns) in the current row
-							char currentChar = rowScan.next().charAt(0);
-							System.out.println(currentChar);
+							String curValue = rowScan.next();	// Moves the scanner to the next column
+							// System.out.println(curValue);
+							boolean isAlphabetic = curValue.matches("[a-zA-Z]+");
 							
-							if(Character.isAlphabetic(currentChar)) {
-								throw new InputMismatchException();
+							if(isAlphabetic) {
+								throw new InputMismatchException("Invalid data type in file body. Expected numeric value, but received: \"" + curValue + "\"");
 							}
-							// rowScan.next();	// Load the next character (column)
 						}
 						rowScan.close();
 						
@@ -63,7 +73,7 @@ public class FormatChecker {
 						colCounter = 0;	// Reset the column counter before Scanning the next row
 					}
 					if(numRows != rowCounter) {	// Check that the file has the number of rows specified by the first line
-						throw new RowMismatchException("\"Actual number of rows does not match specified number");
+						throw new RowMismatchException("Actual number of rows does not match specified number");
 					}
 					System.out.println("VALID");	// If no Exception gets thrown, the file is valid (has good format and data)
 				
