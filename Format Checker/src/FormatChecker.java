@@ -6,9 +6,16 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class FormatChecker {
-	private static int numRows, numCols, rowCounter, colCounter;
+	private static int numRows, numCols; //, rowCounter, colCounter;
 	private static String fileName;
-
+	private static String[][] fileData;
+	
+	public FormatChecker() {
+		numRows = numCols = 0;
+		fileName = "";
+		fileData = null;
+	}
+	
 	/**
 	 * 
 	 * @param args files from command line
@@ -44,7 +51,18 @@ public class FormatChecker {
 					// If the above if statement is skipped, we know the first line is valid. Therefore, we can parse the number of rows and columns from Strings to ints
 					numRows = Integer.parseInt(matcher.group(1));	// The regex's first group contains the first digit, representing the number of rows in the file
 					numCols = Integer.parseInt(matcher.group(3));	// The regex's second group contains the second digit, representing the number of columns in the file
-
+					fileData = new String[numRows][numCols];
+					
+					String line = fileScan.nextLine();
+					Scanner rowScan = new Scanner(line);
+					
+					for(int row = 0; row < numRows; row++) {
+						for(int col = 0; col < numCols; col++) {
+							fileData[row][col] = rowScan.next();
+						}
+						rowScan.nextLine();
+					}
+					/*
 					while (fileScan.hasNextLine()) {
 						String row = fileScan.nextLine();
 						rowCounter++;	// Track the number of rows in the file
@@ -71,6 +89,7 @@ public class FormatChecker {
 					if(numRows != rowCounter) {	// Check that the file has the number of rows specified by the first line
 						throw new RowMismatchException("specified number of rows does not match the actual number of rows");
 					}
+					*/
 					System.out.println("VALID");	// If no Exception gets thrown, the file is valid (has good format and data)
 				
 				} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot access the file (invalid file path)
@@ -79,7 +98,13 @@ public class FormatChecker {
 				} catch(InvalidFirstLineException e) {	// Thrown if the first line does not match the expected format (INT INT)
 					System.out.println(e.toString());
 					System.out.println("INVALID");
-				} catch(InputMismatchException e) {	
+				} catch(IndexOutOfBoundsException e) {
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+				}
+				
+				/*
+				catch(InputMismatchException e) {	
 					System.out.println(e.toString());	// Thrown when the file contains a non-numeric value
 					System.out.println("INVALID");
 				} catch(ColumnMismatchException e) {	// Thrown when the specified number of columns does not match the actual number of columns
@@ -88,12 +113,14 @@ public class FormatChecker {
 				} catch(RowMismatchException e) {	// Thrown when the specified number of rows does not match the actual number of rows
 					System.out.println(e.toString());
 					System.out.println("INVALID");
-				} catch(Exception e) {
+				}
+				*/
+				catch(Exception e) {
 					System.out.println(e.toString());
 					System.out.println("INVALID");
 				} finally {
-					rowCounter = 0;	// Reset counter variables after reading through each file
-					colCounter = 0;	// In case an Exception is thrown in the while loop before colCounter is reset
+					// rowCounter = 0;	// Reset counter variables after reading through each file
+					// colCounter = 0;	// In case an Exception is thrown in the while loop before colCounter is reset
 					continue;	// Skip to the next file
 				}
 			} // end of for loop
