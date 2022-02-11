@@ -41,7 +41,7 @@ public class FormatChecker {
 	 * in the first line. If no Exception is thrown during these tests, then the file is valid.
 	 * 
 	 * @param files: array holding the files specified through the command line
-	 * @throws FileNotFoundException, FirstLineException, ColumnMismatchException, RowMismatchException, Exception (all Exceptions are caught)
+	 * @throws FileNotFoundException, FirstLineException, ColumnMismatchException, RowMismatchException, Exception (all possible Exceptions are caught)
 	 * @return void
 	 */
 	public static void main(String[] files) {
@@ -107,7 +107,10 @@ public class FormatChecker {
 				} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot access the file (invalid file path)
 					System.out.println(e.toString());
 					System.out.println("INVALID");
-				} catch(FirstLineException e) {	// Thrown if the first line does not match the expected format (int int)
+				} catch(FirstLineException e) {	// Thrown if the first line does not contain two white-space-separated, positive integers
+					System.out.println(e.toString());
+					System.out.println("INVALID");
+				} catch(DataTypeException e) {	// Thrown when a scanner encounters non-numeric data
 					System.out.println(e.toString());
 					System.out.println("INVALID");
 				} catch(ColumnMismatchException e) {	// Thrown if the specified number of columns does not match the actual number of columns
