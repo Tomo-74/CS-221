@@ -12,16 +12,19 @@ public class FormatChecker {
 	private static int colCounter;
 	private static String fileName;
 
+	// create constructor
+	
 	/**
 	 * 
 	 * @param args: input files specified through the command line
 	 * @throws 
 	 */
+	// @SuppressWarnings("resource")
 	@SuppressWarnings("resource")
 	public static void main(String[] files) {
 		try { 
 			if(files.length == 0) {	// Check if an input file is provided.
-				throw new FileNotFoundException("Input file(s) not provided.");
+				throw new FileNotFoundException("File(s) not provided.");
 			}
 			
 			for(int index = 0; index < files.length; index++) {	// Loop over each provided file
@@ -49,15 +52,27 @@ public class FormatChecker {
 						numCols = Integer.parseInt(fileFormatLine.strip().substring(2, 3));
 					}
 					
+					System.out.println(numRows + " " + numCols);
+					
 					while (fileScan.hasNextLine()) {
 						String row = fileScan.nextLine();
 						rowCounter++;	// Track the number of rows in the file
+						
+						///// DEBUG BLOCK /////
+						System.out.println("Row: " + row);
+						System.out.println("Row counter: " + rowCounter);
+						System.out.println();
+						///// DEBUG BLOCK /////
+						
+						// oh my goodness use indexout of bounds exception when reading file content
 						Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens
+						
 						while (rowScan.hasNext()) {	// While there are still characters in the row...						
 							colCounter++;	// Track the number of characters (columns) in the current row
 							String curValue = rowScan.next();	// Moves the scanner to the next column
+							
 							// System.out.println(curValue);
-							boolean isAlphabetic = curValue.matches("[a-zA-Z]+");
+							boolean isAlphabetic = curValue.matches("[a-zA-Z]");
 							
 							if(isAlphabetic) {
 								throw new InputMismatchException("Invalid data type in file body. Expected numeric value, but received: \"" + curValue + "\"");
@@ -65,11 +80,11 @@ public class FormatChecker {
 						}
 						rowScan.close();
 						
-						if(colCounter != 0) {
+						// if(colCounter != 0) {
 							if(numCols != colCounter) {	// Check that the file has the number of columns specified by the first line
 								throw new ColumnMismatchException("Actual number of columns does not match specified number");
 							}
-						}
+						// }
 						colCounter = 0;	// Reset the column counter before Scanning the next row
 					}
 					if(numRows != rowCounter) {	// Check that the file has the number of rows specified by the first line

@@ -7,6 +7,6 @@ public class ColumnMismatchException extends IOException {
 	
 	@Override
 	public String toString() {
-		return "java.io." + super.toString();
+		return super.toString();
 	}
 }
