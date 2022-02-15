@@ -32,7 +32,7 @@ public class FormatChecker {
 		expectedRows = expectedCols = actualRows = actualCols = 0;
 		fileName = "";
 	}
-	
+
 	/**
 	 * The main() method determines if the provided files are of valid format. First, it checks that at least one input
 	 * file has been provided. Then it uses two Scanner objects to read through each file. Using the scanners, it
@@ -44,10 +44,18 @@ public class FormatChecker {
 	 * @throws FileNotFoundException, FirstLineException, ColumnMismatchException, RowMismatchException, Exception (all possible Exceptions are caught)
 	 * @return void
 	 */
+
 	public static void main(String[] files) {
 		try { 
 			if(files.length == 0) {	// If at least one file is not provided, throw a FileNotFoundException
 				throw new FileNotFoundException("Input file(s) not provided."); 
+
+	// @SuppressWarnings("resource")
+	@SuppressWarnings("resource")
+	public static void main(String[] files) {
+		try { 
+			if(files.length == 0) {	// Check if an input file is provided.
+				throw new FileNotFoundException("File(s) not provided.");
 			}
 			
 			for(int index = 0; index < files.length; index++) {	// Loop for each file
@@ -89,6 +97,28 @@ public class FormatChecker {
 								}
 							}
 							rowScan.close();
+
+					System.out.println(numRows + " " + numCols);
+					
+					while (fileScan.hasNextLine()) {
+						String row = fileScan.nextLine();
+						rowCounter++;	// Track the number of rows in the file
+						
+						///// DEBUG BLOCK /////
+						System.out.println("Row: " + row);
+						System.out.println("Row counter: " + rowCounter);
+						System.out.println();
+						///// DEBUG BLOCK /////
+						
+						// oh my goodness use indexout of bounds exception when reading file content
+						Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens
+						
+						while (rowScan.hasNext()) {	// While there are still characters in the row...						
+							colCounter++;	// Track the number of characters (columns) in the current row
+							String curValue = rowScan.next();	// Moves the scanner to the next column
+							
+							// System.out.println(curValue);
+							boolean isAlphabetic = curValue.matches("[a-zA-Z]");
 							
 							if(expectedCols != actualCols) {	// Check that the file actually has the number of columns specified by the first line
 								throw new ColumnMismatchException("Expected " + expectedCols + " columns, but file contained " + actualCols);
@@ -97,6 +127,15 @@ public class FormatChecker {
 						} else {	// If the current line is blank, skip to the next line (blank lines do not make a file invalid)
 							continue;
 						}
+
+						rowScan.close();
+						
+						// if(colCounter != 0) {
+							if(numCols != colCounter) {	// Check that the file has the number of columns specified by the first line
+								throw new ColumnMismatchException("Actual number of columns does not match specified number");
+							}
+						// }
+						colCounter = 0;	// Reset the column counter before Scanning the next row
 					}
 					if(expectedRows != actualRows) {	// Check that the file actually has the number of rows specified by the first line
 						throw new RowMismatchException("Expected " + expectedRows + " rows, but file contained " + actualRows);
