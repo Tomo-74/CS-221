@@ -60,8 +60,7 @@ public class FormatChecker {
 			
 			for(int index = 0; index < files.length; index++) {	// Loop for each file
 				try {
-					if(index != 0) {System.out.println(); }	// Print a blank line before each file (excluding the first). This is for readability
-					
+					System.out.println();	// Print a blank line before each file (for output readability)
 					fileName = files[index];	// Find and print the current file's name
 					System.out.println(fileName);
 					
