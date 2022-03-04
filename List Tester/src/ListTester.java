@@ -150,6 +150,7 @@ public class ListTester {
 		testSingleElementList(emptyList_addToFrontA_A, "emptyList_addToFrontA_A", LIST_A, STRING_A);
 		testSingleElementList(emptyList_addToRearA_A, "emptyList_addToRearA_A", LIST_A, STRING_A);
 		testSingleElementList(emptyList_addA_A, "emptyList_addA_A", LIST_A, STRING_A);
+		testSingleElementList(emptyList_add0A_A, "emptyList_add0A_A", LIST_A, STRING_A);
 		//1-element to empty list
 		testEmptyList(A_removeFirst_emptyList, "A_removeFirst_emptyList");
 		testEmptyList(A_removeLast_emptyList, "A_removeLast_emptyList");
@@ -234,7 +235,7 @@ public class ListTester {
 	 * @return [] after removeLast()
 	 */
 	private IndexedUnsortedList<Integer> A_removeLast_emptyList() {
-		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); // Change out for various other methods
+		IndexedUnsortedList<Integer> list = emptyList_addToRearA_A(); // Change out for various other methods
 		list.removeLast();
 		return list;
 	}
@@ -245,7 +246,7 @@ public class ListTester {
 	 * @return [] after remove(A)
 	 */
 	private IndexedUnsortedList<Integer> A_removeA_emptyList() {
-		IndexedUnsortedList<Integer> list = emptyList_addToRearA_A(); 
+		IndexedUnsortedList<Integer> list = emptyList_addA_A(); 
 		list.remove(ELEMENT_A);
 		return list;
 	}
@@ -256,7 +257,7 @@ public class ListTester {
 	 * @return [] after remove(0)
 	 */
 	private IndexedUnsortedList<Integer> A_remove0_emptyList() {
-		IndexedUnsortedList<Integer> list = emptyList_addToRearA_A(); 
+		IndexedUnsortedList<Integer> list = emptyList_add0A_A(); 
 		list.remove(0);
 		return list;
 	}
@@ -296,6 +297,16 @@ public class ListTester {
 	}
 	private Scenario<Integer> emptyList_addA_A = () -> emptyList_addA_A();
 	
+	/** Scenario: [] -> add(0, A) -> [A]
+	 * @return [A] after add(0, A)
+	 */
+	private IndexedUnsortedList<Integer> emptyList_add0A_A() {
+		IndexedUnsortedList<Integer> list = newList();
+		list.add(0, ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> emptyList_add0A_A = () -> emptyList_add0A_A();
+	
 	
 	
 	//////////////////////////////////////////////////////
@@ -315,7 +326,7 @@ public class ListTester {
 	 * @return [B,A] after addToFront(B)
 	 */
 	private IndexedUnsortedList<Integer> A_addAfterBA_AB() {
-		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A(); 
+		IndexedUnsortedList<Integer> list = emptyList_add0A_A(); 
 		list.addAfter(ELEMENT_B, ELEMENT_A);
 		return list;
 	}
