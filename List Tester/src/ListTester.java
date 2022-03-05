@@ -139,10 +139,30 @@ public class ListTester {
 		//Possible list contents after a scenario has been set up
 		Integer[] LIST_A = {ELEMENT_A};
 		String STRING_A = "A";
+		
+		Integer[] LIST_B = {ELEMENT_B};
+		String STRING_B = "B";
+		
 		Integer[] LIST_AB = {ELEMENT_A, ELEMENT_B};
 		String STRING_AB = "AB";
+		
 		Integer[] LIST_BA = {ELEMENT_B, ELEMENT_A};
 		String STRING_BA = "BA";
+		
+		Integer[] LIST_AC = {ELEMENT_A, ELEMENT_C};
+		String STRING_AC = "AC";
+		
+		Integer[] LIST_CB = {ELEMENT_C, ELEMENT_B};
+		String STRING_CB = "CB";
+		
+		Integer[] LIST_BC = {ELEMENT_B, ELEMENT_C};
+		String STRING_BC = "BC";
+		
+		Integer[] LIST_ABD = {ELEMENT_A, ELEMENT_B, ELEMENT_D};
+		String STRING_ABD = "ABD";
+		
+		Integer[] LIST_DBC = {ELEMENT_D, ELEMENT_B, ELEMENT_C};
+		String STRING_DBC = "DBC";
 
 		//newly constructed empty list
 		testEmptyList(newList, "newList");
@@ -160,11 +180,20 @@ public class ListTester {
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA);
 		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB);
 		//1-element to changed 1-element via set()
+		testSingleElementList(A_set0B_B, "A_set0B_B", LIST_B, STRING_B);
 		//2-element to 1-element
+		testSingleElementList(AB_removeFirst_B, "AB_removeFirst_B", LIST_B, STRING_B);
+		testSingleElementList(AB_removeLast_A, "AB_removeLast_A", LIST_A, STRING_A);
 		//2-element to 3-element
 		//2-element to changed 2-element via set()
+		testTwoElementList(AB_set0C_CB, "AB_set0C_CB", LIST_CB, STRING_CB);
+		testTwoElementList(AB_set1C_AC, "AB_set1C_AC", LIST_AC, STRING_AC);
 		//3-element to 2-element
+		testThreeElementList(ABC_removeA_BC, "ABC_removeA_BC", LIST_BC, STRING_BC);
+		testThreeElementList(ABC_remove0_BC, "ABC_remove0_BC", LIST_BC, STRING_BC);
 		//3-element to changed 3-element via set()
+		testThreeElementList(ABC_set0D_DBC, "ABC_set0D_DBC", LIST_DBC, STRING_DBC);
+		testThreeElementList(ABC_set2D_ABD, "ABC_set2D_ABD", LIST_ABD, STRING_ABD);
 		//Iterator concurrency tests
 		test_IterConcurrency();
 		if (SUPPORTS_LIST_ITERATOR) {
@@ -199,9 +228,9 @@ public class ListTester {
 		case badList:
 			listToUse = new BadList<Integer>();
 			break;
-//		case arrayList:
-//			listToUse = new IUArrayList<Integer>();
-//			break;
+		case arrayList:
+			listToUse = new IUArrayList<Integer>();
+			break;
 //		case singleLinkedList:
 //			listToUse = new IUSingleLinkedList<Integer>();
 //			break;
@@ -307,6 +336,37 @@ public class ListTester {
 	}
 	private Scenario<Integer> emptyList_add0A_A = () -> emptyList_add0A_A();
 	
+	/** Scenario: [A] -> set(0, B) -> [B]
+	 * @return [B] after set(0, B)
+	 */
+	private IndexedUnsortedList<Integer> A_set0B_B() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.set(0, ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_set0B_B = () -> A_set0B_B();
+	
+	/** Scenario: [A,B] -> removeFirst() -> [B]
+	 * @return [B] after removeFirst()
+	 */
+	private IndexedUnsortedList<Integer> AB_removeFirst_B() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.add(ELEMENT_B);
+		list.removeFirst();
+		return list;
+	}
+	private Scenario<Integer> AB_removeFirst_B = () -> AB_removeFirst_B();
+	
+	/** Scenario: [A,B] -> removeLast() -> [A]
+	 * @return [A] after removeLast()
+	 */
+	private IndexedUnsortedList<Integer> AB_removeLast_A() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.addToRear(ELEMENT_B);
+		list.removeLast();
+		return list;
+	}
+	private Scenario<Integer> AB_removeLast_A = () -> AB_removeLast_A();
 	
 	
 	//////////////////////////////////////////////////////
@@ -332,8 +392,80 @@ public class ListTester {
 	}
 	private Scenario<Integer> A_addAfterBA_AB = () -> A_addAfterBA_AB();
 	
+	/** Scenario: [A,B] -> set(0,C) -> [C,B]
+	 * @return [C,B] after set(0,C)
+	 */
+	private IndexedUnsortedList<Integer> AB_set0C_CB() {
+		IndexedUnsortedList<Integer> list = emptyList_addA_A();
+		list.add(1, ELEMENT_B);
+		list.set(0, ELEMENT_C);
+		return list;
+	}
+	private Scenario<Integer> AB_set0C_CB = () -> AB_set0C_CB();
 	
+	/** Scenario: [A,B] -> set(1,C) -> [A,C]
+	 * @return [A,C] after set(1,C)
+	 */
+	private IndexedUnsortedList<Integer> AB_set1C_AC() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.addAfter(ELEMENT_B, ELEMENT_A);
+		list.set(1, ELEMENT_C);
+		return list;
+	}
+	private Scenario<Integer> AB_set1C_AC = () -> AB_set1C_AC();
+	
+	/** Scenario: [A,B,C] -> remove(A) -> [B,C]
+	 * @return [B,C] after remove(A)
+	 */
+	private IndexedUnsortedList<Integer> ABC_removeA_BC() {
+		IndexedUnsortedList<Integer> list = emptyList_addToRearA_A();
+		list.add(ELEMENT_B);
+		list.add(2, ELEMENT_C);
+		list.remove(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> ABC_removeA_BC = () -> ABC_removeA_BC();
+	
+	/** Scenario: [A,B,C] -> remove(0) -> [B,C]
+	 * @return [B,C] after remove(0)
+	 */
+	private IndexedUnsortedList<Integer> ABC_remove0_BC() {
+		IndexedUnsortedList<Integer> list = emptyList_add0A_A();
+		list.addAfter(ELEMENT_B, ELEMENT_A);
+		list.addToRear(ELEMENT_C);
+		list.remove(0);
+		return list;
+	}
+	private Scenario<Integer> ABC_remove0_BC = () -> ABC_remove0_BC();
 
+	
+	//////////////////////////////////////////////////////
+	// XXX SCENARIOS RESULTING IN A THREE-ELEMENT LIST
+	//////////////////////////////////////////////////////
+	/** Scenario: [A,B,C] -> set(0,D) -> [D,B,C]
+	 * @return [D,B,C] after set(0,D)
+	 */
+	private IndexedUnsortedList<Integer> ABC_set0D_DBC() {
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
+		list.addToRear(ELEMENT_B);
+		list.addAfter(ELEMENT_C, ELEMENT_B);
+		list.set(0, ELEMENT_D);
+		return list;
+	}
+	private Scenario<Integer> ABC_set0D_DBC = () -> ABC_set0D_DBC();
+	
+	/** Scenario: [A,B,C] -> set(2,D) -> [A,B,D]
+	 * @return [A,B,D] after set(2,D)
+	 */
+	private IndexedUnsortedList<Integer> ABC_set2D_ABD() {
+		IndexedUnsortedList<Integer> list = emptyList_addA_A();
+		list.add(ELEMENT_B);
+		list.add(ELEMENT_C);
+		list.set(2, ELEMENT_D);
+		return list;
+	}
+	private Scenario<Integer> ABC_set2D_ABD = () -> ABC_set2D_ABD();
+	
 	/////////////////////////////////
 	//XXX Tests for 0-element list
 	/////////////////////////////////
