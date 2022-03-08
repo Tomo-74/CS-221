@@ -90,7 +90,7 @@ public interface IndexedUnsortedList<T> extends Iterable<T>
     /**  
      * Replace the element at the specified index with the given element. 
      *
-     * @param index   the index of the element to replace
+     * @param index the index of the element to replace
      * @param element the replacement element to be set into the list
      * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size)
      */

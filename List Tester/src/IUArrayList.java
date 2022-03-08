@@ -53,8 +53,8 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void addToRear(T element) {
-		// TODO Auto-generated method stub
-		
+		array[rear] = element;
+		rear++;
 	}
 
 	@Override
@@ -66,18 +66,19 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public void addAfter(T element, T target) {
 		// TODO Auto-generated method stub
-		
+		rear++;
 	}
 
 	@Override
 	public void add(int index, T element) {
 		// TODO Auto-generated method stub
-		
+		rear++;
 	}
 
 	@Override
 	public T removeFirst() {
 		// TODO Auto-generated method stub
+		rear--;
 		return null;
 	}
 
@@ -95,19 +96,20 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public T remove(T element) {
 		// TODO Auto-generated method stub
+		rear--;
 		return null;
 	}
 
 	@Override
 	public T remove(int index) {
 		// TODO Auto-generated method stub
+		rear--;
 		return null;
 	}
 
 	@Override
 	public void set(int index, T element) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
