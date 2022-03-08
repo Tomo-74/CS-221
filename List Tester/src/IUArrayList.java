@@ -1,8 +1,50 @@
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
+/** 
+ * Array-based implementation of an indexed unsorted list. All objects are stored as elements
+ * in an array of type T, where T is a generic representing any Object type specified by the 
+ * user at instantiation. Overrides all methods from the IndexedUnsortedList interface. Contains
+ * a private subclass "ALIterator" which defines methods to generate and manipulate an
+ * iterator object over an ArrayList object.
+ * 
+ * @author Thomas Lonowski
+ * @date 3/8/22
+ * @param <T> generic placeholder for any Object type
+ */
+public class IUArrayList<T> implements IndexedUnsortedList<T> {
+	private T[] array;	// Underlying array that stores values added to the ArrayList
+	private int rear;	// Points to the next available (empty) index in array
+	
+	/**
+	 * IUArrayList constructor which instantiates a new array of type T with length given by
+	 * parameter "size".
+	 * 
+	 * @param size the initial size of array specified by the user
+	 */
+	@SuppressWarnings("unchecked")
+	public IUArrayList(int size) {
+		array = (T[])new Object[size];
+		rear = 0;
+	}
+	
+	/**
+	 * Default IUArrayList constructor.
+	 */
+	public IUArrayList() {
+		this(0);
+	}	
 
-public class IUArrayList<T> implements IndexedUnsortedList<T>{
-
+	/**
+	 * Helper method that checks if array is full and if so, creates a copy with 100 more indexes.
+	 */
+	private void expandIfNecessary() {
+		if(rear == array.length) {
+			array = Arrays.copyOf(array, array.length + 100);
+		}
+	}
+	
 	@Override
 	public void addToFront(T element) {
 		// TODO Auto-generated method stub
@@ -41,8 +83,13 @@ public class IUArrayList<T> implements IndexedUnsortedList<T>{
 
 	@Override
 	public T removeLast() {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isEmpty()) {
+			T retVal = array[rear];
+			array[rear] = null;
+			rear--;
+			return retVal;
+		}
+		throw new NoSuchElementException();
 	}
 
 	@Override
@@ -71,20 +118,30 @@ public class IUArrayList<T> implements IndexedUnsortedList<T>{
 
 	@Override
 	public int indexOf(T element) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(!isEmpty()) {
+			for(int i = 0; i < rear; i++) {
+				if(array[i].equals(element)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	@Override
 	public T first() {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isEmpty()) {
+			return array[0];
+		}
+		throw new NoSuchElementException();
 	}
 
 	@Override
 	public T last() {
-		// TODO Auto-generated method stub
-		return null;
+		if(!isEmpty()) {
+			return array[rear];
+		}
+		throw new NoSuchElementException();
 	}
 
 	@Override
@@ -95,14 +152,12 @@ public class IUArrayList<T> implements IndexedUnsortedList<T>{
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return !(rear > 0);
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return rear;
 	}
 
 	@Override
