@@ -33,98 +33,126 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	 * Default IUArrayList constructor.
 	 */
 	public IUArrayList() {
-		this(0);
+		this(10);
 	}	
 
 	/**
-	 * Helper method that checks if array is full and if so, creates a copy with 100 more indexes.
+	 * Helper method that checks if array is full and if so, creates a copy with doubled size.
 	 */
 	private void expandIfNecessary() {
-		if(rear == array.length) {
-			array = Arrays.copyOf(array, array.length + 100);
+		if(rear + 1 > array.length) {
+			array = Arrays.copyOf(array, array.length * 2);
 		}
 	}
 	
 	@Override
 	public void addToFront(T element) {
-		// TODO Auto-generated method stub
-		
+		add(0, element);
 	}
 
 	@Override
 	public void addToRear(T element) {
+		expandIfNecessary();
 		array[rear] = element;
 		rear++;
 	}
 
 	@Override
 	public void add(T element) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addAfter(T element, T target) {
-		// TODO Auto-generated method stub
+		expandIfNecessary();
+		array[rear] = element;
 		rear++;
 	}
 
 	@Override
+	public void addAfter(T element, T target) {
+		int index = indexOf(target);
+		if(index == -1) {
+			throw new NoSuchElementException();
+		}
+		add(index + 1, element);
+	}
+
+	@Override
 	public void add(int index, T element) {
-		// TODO Auto-generated method stub
+		if(index < 0 || index > rear) {	// Check that the index is accessible. This also guarantees that array is not empty.
+			throw new IndexOutOfBoundsException();
+		}
+		expandIfNecessary();
+		for(int i = rear; i > index; i--) {
+			array[i] = array[i-1];
+		}
+		array[index] = element;
 		rear++;
 	}
 
 	@Override
 	public T removeFirst() {
-		// TODO Auto-generated method stub
-		rear--;
-		return null;
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		return remove(0);
 	}
 
 	@Override
 	public T removeLast() {
-		if(!isEmpty()) {
-			T retVal = array[rear];
-			array[rear] = null;
-			rear--;
-			return retVal;
+		if(isEmpty()) {
+			throw new NoSuchElementException();
 		}
-		throw new NoSuchElementException();
+		T removedVal = array[rear-1];
+		array[rear-1] = null;
+		rear--;
+		return removedVal;
 	}
 
 	@Override
 	public T remove(T element) {
-		// TODO Auto-generated method stub
-		rear--;
-		return null;
+		int indexToRemove = indexOf(element);	// Will be a positive integer if element is found in array, -1 if not.
+		if(indexToRemove >= 0) {
+			return remove(indexToRemove);
+		}
+		throw new NoSuchElementException();
+		
 	}
 
 	@Override
 	public T remove(int index) {
-		// TODO Auto-generated method stub
+		if(index < 0 || index >= rear) {	// Check that the index is accessible. This also guarantees that array is not empty.
+			throw new IndexOutOfBoundsException();
+		}
+		T removedVal = array[index];
+		for(int i = index; i < rear-1; i++) {	// Work backwards from the given index
+			array[i] = array[i+1];	// Shift the values back by one index
+		}
 		rear--;
-		return null;
+		array[rear] = null;	// Erase the last value, because after shifting it has a copy
+		return removedVal;
 	}
 
 	@Override
 	public void set(int index, T element) {
-		// TODO Auto-generated method stub
+		if(index < 0 || index >= rear) {	// Check that the index is accessible. This also guarantees that array is not empty.
+			throw new IndexOutOfBoundsException();
+		}
+		array[index] = element;
 	}
 
 	@Override
 	public T get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		if(index < 0 || index >= rear) {	// Check that the index is accessible. This also guarantees that array is not empty.
+			throw new IndexOutOfBoundsException();
+		}
+		return array[index];
 	}
 
 	@Override
 	public int indexOf(T element) {
-		if(!isEmpty()) {
-			for(int i = 0; i < rear; i++) {
-				if(array[i].equals(element)) {
-					return i;
-				}
+		if(isEmpty()) {
+			return -1;
+		}
+		for(int i = 0; i < rear; i++) {
+			if(array[i].equals(element)) {
+				return i;
 			}
 		}
 		return -1;
@@ -132,29 +160,31 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T first() {
-		if(!isEmpty()) {
-			return array[0];
+		if(isEmpty()) {
+			throw new NoSuchElementException();
 		}
-		throw new NoSuchElementException();
+		return array[0];
 	}
 
 	@Override
 	public T last() {
-		if(!isEmpty()) {
-			return array[rear];
+		if(isEmpty()) {
+			throw new NoSuchElementException();
 		}
-		throw new NoSuchElementException();
+		return array[rear-1];
 	}
 
 	@Override
 	public boolean contains(T target) {
-		// TODO Auto-generated method stub
+		if(indexOf(target) >= 0) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return !(rear > 0);
+		return rear == 0;
 	}
 
 	@Override
@@ -163,6 +193,20 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder description = new StringBuilder();
+		description.append('[');
+		for(int i = 0; i < rear; i++) {
+			description.append(array[i].toString() + ", ");
+		}
+		if(!isEmpty()) {
+			description.delete(description.length()-2, description.length());	// If the list has elements, remove the trailing ", "
+		}
+		description.append(']');
+		return description.toString();
+	}
+	
+	@Override
 	public Iterator<T> iterator() {
 		// TODO Auto-generated method stub
 		return null;
@@ -170,34 +214,32 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public ListIterator<T> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ListIterator<T> listIterator(int startingIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	private class ALIterator implements Iterator {
-
+		int modCount;
+		
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
+			// TODO How do this? 
 			return false;
 		}
 
 		@Override
 		public Object next() {
-			// Use if statement with !hasNext to throw some error?
-			// TODO Auto-generated method stub
+			// TODO Use if statement with !hasNext to throw some error?
 			return null;
 		}
 		
 		@Override
 		public void remove() {
-			
+			//TODO
 		}
 	}
 }
