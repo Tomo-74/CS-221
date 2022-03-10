@@ -20,8 +20,14 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	private int modCount;
 	
 	/**
-	 * IUArrayList constructor which instantiates a new array of type T with length given by
-	 * parameter "size".
+	 * Default IUArrayList constructor.
+	 */
+	public IUArrayList() {
+		this(10);	// Default list size
+	}	
+	
+	/**
+	 * Parameterized constructor: instantiates a new array of type T with length given by parameter "size"
 	 * 
 	 * @param size the initial size of array specified by the user
 	 */
@@ -30,13 +36,6 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		array = (T[])new Object[size];
 		rear = modCount = 0;
 	}
-	
-	/**
-	 * Default IUArrayList constructor.
-	 */
-	public IUArrayList() {
-		this(10);	// Default list size
-	}	
 
 	/**
 	 * Helper method that checks if array is full and if so, creates a copy with doubled size.
