@@ -14,7 +14,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	private int size;
 	
 	/**
-	 * Initializes a new, empty list
+	 * Default constructor: initializes a new, empty list
 	 */
 	public IUSingleLinkedList() {
 		head = tail = null;
@@ -22,15 +22,25 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 	
 	@Override
-	public void addToFront(T element) {
-		// TODO Auto-generated method stub
-		
+	public void addToFront(T element) {		// O(1)
+		Node<T> newNode = new Node<T>(element);
+		if(isEmpty()) {
+			tail = newNode;
+		}
+		head = newNode;
+		size++;
 	}
 
 	@Override
 	public void addToRear(T element) {
-		// TODO Auto-generated method stub
-		
+		Node<T> newNode = new Node<T>(element);
+		if(isEmpty()) {
+			head = newNode;
+		} else {
+			tail.setNext(newNode);			
+		}
+		tail = newNode;
+		size++;
 	}
 
 	@Override
@@ -52,15 +62,39 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
-	public T removeFirst() {
-		// TODO Auto-generated method stub
-		return null;
+	public T removeFirst() {	// O(1)
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		T retVal = head.getElement();
+		head = head.getNext();
+		if(head == null) {	// Case: 1-element list. Head gets set to null above, now tail must also be set to null
+			tail = null;
+		}
+		size--;
+		return retVal;
 	}
 
 	@Override
-	public T removeLast() {
-		// TODO Auto-generated method stub
-		return null;
+	public T removeLast() {	// O(n)
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		
+		T retVal = tail.getElement();	// Save the last element to return after removal
+		
+		if(size > 1) {
+			Node<T> newTail = head;
+			while(newTail.getNext() != tail) {
+				newTail = newTail.getNext();
+			}
+			tail.setNext(null);
+			tail = newTail;
+		} else {	// If it's a 1-element list, simply delete the element
+			head = tail = null;
+		}
+		size--;
+		return retVal;
 	}
 
 	@Override
@@ -88,30 +122,19 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
-	public int indexOf(T element) {
-//		int index = 0;
-//		Node<T> currentNode = head;
-//		
-//		while(currentNode != null) {
-//			if(currentNode.getElement().equals(element)) {
-//				return index;
-//			}
-//			index++;
-//			currentNode = currentNode.getNext();	// Write over current node's address with the next node's address
-//		}
-//		return -1;
+	public int indexOf(T element) {	// O(n)
 		Node<T> currentNode = head;
-		int returnIndex = -1;
-		int currentIndex = 0;
+		int retIndex = -1;
+		int curIndex = 0;
 		
-		while(returnIndex < 0 && currentNode != null) {
+		while(retIndex < 0 && currentNode != null) {
 			if(currentNode.getElement().equals(element)) {
-				returnIndex = currentIndex;
+				retIndex = curIndex;
 			}
-			currentIndex++;
-			currentNode = currentNode.getNext();
+			curIndex++;
+			currentNode = currentNode.getNext();	// Write over current node's address with the next node's address
 		}
-		return returnIndex;
+		return retIndex;
 	}
 
 	@Override
@@ -139,7 +162,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	@Override
 	public boolean isEmpty() {
 		return head == null;	// Using size == 0 requires you to accurately update size
-								// Using head == null is fail-safe, because head is ONLY ever null when the list is empty
+								// Using head == null, however, is fail-safe because head is ONLY ever null when the list is empty
 	}
 
 	@Override
