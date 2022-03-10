@@ -255,10 +255,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 			if(!(iterModCount == modCount)) {	// Check for concurrent modification
 				throw new ConcurrentModificationException();
 			}
-			if(array[nextIndex] != null) {
-				return true;
-			}
-			return false;
+			return nextIndex < rear;
 		}
 
 		@Override
