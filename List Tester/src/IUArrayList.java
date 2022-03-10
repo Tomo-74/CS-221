@@ -2,20 +2,22 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.ConcurrentModificationException;
 /** 
  * Array-based implementation of an indexed unsorted list. All objects are stored as elements
  * in an array of type T, where T is a generic representing any Object type specified by the 
- * user at instantiation. Overrides all methods from the IndexedUnsortedList interface. Contains
- * a private subclass "ALIterator" which defines methods to generate and manipulate an
- * iterator object over an ArrayList object.
+ * user at instantiation. IUArrayList overrides all methods from the IndexedUnsortedList interface,
+ * and contains a private subclass "ALIterator" which defines methods for iterating over an
+ * ArrayList object. 
  * 
  * @author Thomas Lonowski
- * @date 3/8/22
+ * @date 3/10/22
  * @param <T> generic placeholder for any Object type
  */
 public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	private T[] array;	// Underlying array that stores values added to the ArrayList
 	private int rear;	// Points to the next available (empty) index in array
+	private int modCount;
 	
 	/**
 	 * IUArrayList constructor which instantiates a new array of type T with length given by
@@ -26,14 +28,14 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@SuppressWarnings("unchecked")
 	public IUArrayList(int size) {
 		array = (T[])new Object[size];
-		rear = 0;
+		rear = modCount = 0;
 	}
 	
 	/**
 	 * Default IUArrayList constructor.
 	 */
 	public IUArrayList() {
-		this(10);
+		this(10);	// Default list size
 	}	
 
 	/**
@@ -55,6 +57,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		expandIfNecessary();
 		array[rear] = element;
 		rear++;
+		modCount++;
 	}
 
 	@Override
@@ -62,6 +65,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		expandIfNecessary();
 		array[rear] = element;
 		rear++;
+		modCount++;
 	}
 
 	@Override
@@ -84,6 +88,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		}
 		array[index] = element;
 		rear++;
+		modCount++;
 	}
 
 	@Override
@@ -102,6 +107,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		T removedVal = array[rear-1];
 		array[rear-1] = null;
 		rear--;
+		modCount++;
 		return removedVal;
 	}
 
@@ -126,6 +132,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		}
 		rear--;
 		array[rear] = null;	// Erase the last value, because after shifting it has a copy
+		modCount++;
 		return removedVal;
 	}
 
@@ -135,6 +142,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 			throw new IndexOutOfBoundsException();
 		}
 		array[index] = element;
+		modCount++;	// Should set() be counted as a modification?
 	}
 
 	@Override
@@ -206,10 +214,11 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 		return description.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		ALIterator<T> iter = new ALIterator<T>();
+		return iter;
 	}
 
 	@Override
@@ -221,25 +230,67 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	public ListIterator<T> listIterator(int startingIndex) {
 		throw new UnsupportedOperationException();
 	}
-
-	private class ALIterator implements Iterator {
-		int modCount;
+	
+	/**
+	 * An implementation of the Iteration interface for use with ArrayList objects. This particular
+	 * implementation is fail-fast, meaning that a ConcurrentModificationException is thrown if the
+	 * array is modified by anything other than the IUArrayList class itself and this particular
+	 * ALIterator object.
+	 * 
+	 * @param <E> a generic Object type
+	 */
+	private class ALIterator<E> implements Iterator {
+		int iterModCount;
+		int nextIndex;
+		boolean canRemove;
+		
+		public ALIterator() {
+			iterModCount = modCount;
+			nextIndex = 0;
+			canRemove = false;
+		}
 		
 		@Override
 		public boolean hasNext() {
-			// TODO How do this? 
+			if(!(iterModCount == modCount)) {	// Check for concurrent modification
+				throw new ConcurrentModificationException();
+			}
+			if(array[nextIndex] != null) {
+				return true;
+			}
 			return false;
 		}
 
 		@Override
-		public Object next() {
-			// TODO Use if statement with !hasNext to throw some error?
-			return null;
+		public T next() {
+			if(!(iterModCount == modCount)) {	// Check for concurrent modification
+				throw new ConcurrentModificationException();
+			}
+			if(!hasNext()) {	// Check for remaining elements in the array
+				throw new NoSuchElementException();
+			}
+			nextIndex++;	// Advance the iterator
+			canRemove = true;	// Allow removal
+			return array[nextIndex-1];	// Return the element that was iterated over
 		}
 		
 		@Override
 		public void remove() {
-			//TODO
+			if(!(iterModCount == modCount)) {	// Check for concurrent modification
+				throw new ConcurrentModificationException();
+			}
+			if(!canRemove) {	// Check if next() has been called, thereby allowing remove() to be called
+				throw new IllegalStateException();
+			}
+			for(int i = nextIndex-1; i < rear-1; i++) {	// Work backwards from the given index
+				array[i] = array[i+1];	// Shift the values back by one index
+			}
+			iterModCount++;
+			modCount++;
+			rear--;
+			nextIndex--;	// Retreat the iterator, since an element was removed
+			array[rear] = null;	// Erase the last value, because after shifting it has a copy
+			canRemove = false;
 		}
 	}
 }
