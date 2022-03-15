@@ -238,7 +238,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	 * 
 	 * @param <E> a generic Object type
 	 */
-	private class ALIterator<E> implements Iterator {
+	private class ALIterator implements Iterator<T> {
 		int iterModCount;
 		int nextIndex;
 		boolean canRemove;
