@@ -226,12 +226,12 @@ public class ListTester {
 		case goodList:
 			listToUse = new GoodList<Integer>();
 			break;
-		case badList:
-			listToUse = new BadList<Integer>();
-			break;
-		case arrayList:
-			listToUse = new IUArrayList<Integer>();
-			break;
+//		case badList:
+//			listToUse = new BadList<Integer>();
+//			break;
+//		case arrayList:
+//			listToUse = new IUArrayList<Integer>();
+//			break;
 		case singleLinkedList:
 			listToUse = new IUSingleLinkedList<Integer>();
 			break;
@@ -439,10 +439,10 @@ public class ListTester {
 	}
 	private Scenario<Integer> ABC_remove0_BC = () -> ABC_remove0_BC();
 
-	/** Scenario: [A,B,C] -> iterNextNextRemove -> [A,C]
-	 * @return [A,C] after iterNextNextRemove
+	/** Scenario: [A,B,C] -> iterator remove() after next() returns B -> [A,C]
+	 * @return [A,C] after iterator next(), next(), remove()
 	 */
-	private IndexedUnsortedList<Integer> ABC_iterNextNextRemove_AC() {
+	private IndexedUnsortedList<Integer> ABC_iterNextBRemove_AC() {
 		IndexedUnsortedList<Integer> list = ABC_remove0_BC();
 		list.addToFront(ELEMENT_A);
 		Iterator<Integer> it = list.iterator();
@@ -451,7 +451,7 @@ public class ListTester {
 		it.remove();
 		return list;
 	}
-	private Scenario<Integer> ABC_iterNextNextRemove_AC = () -> ABC_iterNextNextRemove_AC();
+	private Scenario<Integer> ABC_iterNextNextRemove_AC = () -> ABC_iterNextBRemove_AC();
 	
 	//////////////////////////////////////////////////////
 	// XXX SCENARIOS RESULTING IN A THREE-ELEMENT LIST
