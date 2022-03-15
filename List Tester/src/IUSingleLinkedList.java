@@ -50,9 +50,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void add(T element) {
-		// TODO Auto-generated method stub
-		modCount++;
-		size++;
+		addToRear(element);
 	}
 
 	@Override
@@ -64,7 +62,6 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(targetNode == null) {	// Occurs when the element isn't found in the list
 			throw new NoSuchElementException();
 		}
-		
 		Node<T> newNode = new Node<T>(element);
 		newNode.setNext(targetNode.getNext());	// Order cannot be switched, because targetElement would lose its reference to the next element
 		targetNode.setNext(newNode);
@@ -77,7 +74,21 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void add(int index, T element) {
-		// Always need to access the element before index
+		if(index < 0 || index > size) {
+			throw new IndexOutOfBoundsException();
+		}
+		Node<T> newNode = new Node<T>(element);
+		Node<T> targetNode = head;
+		int fromIndex = 0;
+		while(fromIndex < index-1) {	// Find the element before the element at index
+			targetNode = targetNode.getNext();	// targetNode will never be null because index is guaranteed to be in bounds
+			fromIndex++;
+		}
+		newNode.setNext(targetNode.getNext());
+		targetNode.setNext(newNode);
+		if(targetNode == tail) {
+			tail = newNode;
+		}
 		modCount++;
 		size++;
 	}
@@ -126,10 +137,10 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			throw new NoSuchElementException();
 		}
 		T retVal;
-		if(head.getElement().equals(element)) {
+		if(head.getElement().equals(element)) {	// If the element to remove if the head element
 			retVal = head.getElement();
 			head = head.getNext();	// Shift head forward 1 element
-			if(head == null) {	// If it was a 1-element list
+			if(head == null) {	// If it was also a 1-element list
 				tail = null;
 			}
 		}
@@ -168,7 +179,15 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T get(int index) {
-		// TODO Auto-generated method stub
+		/*
+		Node<T> targetNode = head;
+		while() {	// search until the target element is found in the list
+			targetNode = targetNode.getNext();	// targetNode becomes null if it reaches the end of the list
+		}
+		if(targetNode == null) {	// Occurs when the element isn't found in the list
+			throw new NoSuchElementException();
+		}
+		*/
 		return null;
 	}
 
