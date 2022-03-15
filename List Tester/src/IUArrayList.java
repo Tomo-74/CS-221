@@ -216,8 +216,7 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
-		ALIterator<T> iter = new ALIterator<T>();
-		return iter;
+		return new ALIterator();
 	}
 
 	@Override
