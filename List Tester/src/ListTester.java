@@ -176,7 +176,7 @@ public class ListTester {
 		testEmptyList(A_removeLast_emptyList, "A_removeLast_emptyList");
 		testEmptyList(A_removeA_emptyList, "A_removeA_emptyList");
 		testEmptyList(A_remove0_emptyList, "A_remove0_emptyList");
-		testEmptyList(A_iterRemoveA_emptyList, "A_iterRemoveA_emptyList");
+		testEmptyList(A_iterNextARemove_emptyList, "A_iterRemoveA_emptyList");
 		//1-element to 2-element
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA);
 		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB);
@@ -185,7 +185,7 @@ public class ListTester {
 		//2-element to 1-element
 		testSingleElementList(AB_removeFirst_B, "AB_removeFirst_B", LIST_B, STRING_B);
 		testSingleElementList(AB_removeLast_A, "AB_removeLast_A", LIST_A, STRING_A);
-		testSingleElementList(AB_iterRemoveB_A, "AB_iterRemoveB_A", LIST_A, STRING_A);
+		testSingleElementList(AB_iterNextBRemove_A, "AB_iterNextBRemove_A", LIST_A, STRING_A);
 		//2-element to 3-element
 		//2-element to changed 2-element via set()
 		testTwoElementList(AB_set0C_CB, "AB_set0C_CB", LIST_CB, STRING_CB);
@@ -193,7 +193,7 @@ public class ListTester {
 		//3-element to 2-element
 		testTwoElementList(ABC_removeA_BC, "ABC_removeA_BC", LIST_BC, STRING_BC);
 		testTwoElementList(ABC_remove0_BC, "ABC_remove0_BC", LIST_BC, STRING_BC);
-		testTwoElementList(ABC_iterRemoveB_AC, "ABC_iterRemoveB_AC", LIST_AC, STRING_AC);
+		testTwoElementList(ABC_iterNextBRemove_AC, "ABC_iterNextBRemove_AC", LIST_AC, STRING_AC);
 		//3-element to changed 3-element via set()
 		testThreeElementList(ABC_set0D_DBC, "ABC_set0D_DBC", LIST_DBC, STRING_DBC);
 		testThreeElementList(ABC_set2D_ABD, "ABC_set2D_ABD", LIST_ABD, STRING_ABD);
@@ -225,29 +225,26 @@ public class ListTester {
 	private IndexedUnsortedList<Integer> newList() {
 		IndexedUnsortedList<Integer> listToUse;
 		switch (LIST_TO_USE) {
-<<<<<<< HEAD
-		case goodList:
-			listToUse = new GoodList<Integer>();
-			break;
-=======
-//		case goodList:
-//			listToUse = new GoodList<Integer>();
-//			break;
->>>>>>> 1c870bcc3cd64e20ac3d3fc69d26026bdc8ca8ab
-//		case badList:
-//			listToUse = new BadList<Integer>();
-//			break;
-//		case arrayList:
-//			listToUse = new IUArrayList<Integer>();
-//			break;
-		case singleLinkedList:
-			listToUse = new IUSingleLinkedList<Integer>();
-			break;
-//		case doubleLinkedList:
-//			listToUse = new IUDoubleLinkedList<Integer>();
-//			break;
-		default:
-			listToUse = null;
+//			case goodList:
+//				listToUse = new GoodList<Integer>();
+//				break;
+//			case goodList:
+//				listToUse = new GoodList<Integer>();
+//				break;
+//			case badList:
+//				listToUse = new BadList<Integer>();
+//				break;
+//			case arrayList:
+//				listToUse = new IUArrayList<Integer>();
+//				break;
+			case singleLinkedList:
+				listToUse = new IUSingleLinkedList<Integer>();
+				break;
+//			case doubleLinkedList:
+//				listToUse = new IUDoubleLinkedList<Integer>();
+//				break;
+			default:
+				listToUse = null;
 		}
 		return listToUse;
 	}
@@ -301,17 +298,17 @@ public class ListTester {
 	}
 	private Scenario<Integer> A_remove0_emptyList = () -> A_remove0_emptyList();
 	
-	/** Scenario: [A] -> iterRemoveA -> []
-	 * @return [] after iterRemoveA
+	/** Scenario: [A] -> iterNextARemove -> []
+	 * @return [] after next(), remove()
 	 */
-	private IndexedUnsortedList<Integer> A_iterRemoveA_emptyList() {
+	private IndexedUnsortedList<Integer> A_iterNextARemove_emptyList() {
 		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
 		Iterator<Integer> it = list.iterator();
 		it.next();
 		it.remove();
 		return list;
 	}
-	private Scenario<Integer> A_iterRemoveA_emptyList = () -> A_iterRemoveA_emptyList();
+	private Scenario<Integer> A_iterNextARemove_emptyList = () -> A_iterNextARemove_emptyList();
 	
 	
 	//////////////////////////////////////////////////////
@@ -389,10 +386,10 @@ public class ListTester {
 	}
 	private Scenario<Integer> AB_removeLast_A = () -> AB_removeLast_A();
 	
-	/** Scenario: [A,B] -> iterRemoveB -> [A]
-	 * @return [A] after iterRemoveB
+	/** Scenario: [A,B] -> iterNextBRemove -> [A]
+	 * @return [A] after next(), next(), remove()
 	 */
-	private IndexedUnsortedList<Integer> AB_iterRemoveB_A() {
+	private IndexedUnsortedList<Integer> AB_iterNextBRemove_A() {
 		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
 		list.addToRear(ELEMENT_B);
 		Iterator<Integer> it = list.iterator();
@@ -401,7 +398,7 @@ public class ListTester {
 		it.remove();
 		return list;
 	}
-	private Scenario<Integer> AB_iterRemoveB_A = () -> AB_iterRemoveB_A();
+	private Scenario<Integer> AB_iterNextBRemove_A = () -> AB_iterNextBRemove_A();
 	
 	
 	//////////////////////////////////////////////////////
@@ -476,11 +473,8 @@ public class ListTester {
 	/** Scenario: [A,B,C] -> iterator remove() after next() returns B -> [A,C]
 	 * @return [A,C] after iterator next(), next(), remove()
 	 */
-<<<<<<< HEAD
 	private IndexedUnsortedList<Integer> ABC_iterNextBRemove_AC() {
-=======
-	private IndexedUnsortedList<Integer> ABC_iterRemoveB_AC() {
->>>>>>> 1c870bcc3cd64e20ac3d3fc69d26026bdc8ca8ab
+
 		IndexedUnsortedList<Integer> list = ABC_remove0_BC();
 		list.addToFront(ELEMENT_A);
 		Iterator<Integer> it = list.iterator();
@@ -489,11 +483,8 @@ public class ListTester {
 		it.remove();
 		return list;
 	}
-<<<<<<< HEAD
-	private Scenario<Integer> ABC_iterNextNextRemove_AC = () -> ABC_iterNextBRemove_AC();
-=======
-	private Scenario<Integer> ABC_iterRemoveB_AC = () -> ABC_iterRemoveB_AC();
->>>>>>> 1c870bcc3cd64e20ac3d3fc69d26026bdc8ca8ab
+	private Scenario<Integer> ABC_iterNextBRemove_AC = () -> ABC_iterNextBRemove_AC();
+
 	
 	//////////////////////////////////////////////////////
 	// XXX SCENARIOS RESULTING IN A THREE-ELEMENT LIST
