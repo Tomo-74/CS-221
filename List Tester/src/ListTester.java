@@ -176,7 +176,7 @@ public class ListTester {
 		testEmptyList(A_removeLast_emptyList, "A_removeLast_emptyList");
 		testEmptyList(A_removeA_emptyList, "A_removeA_emptyList");
 		testEmptyList(A_remove0_emptyList, "A_remove0_emptyList");
-		testEmptyList(A_iterNextARemove_emptyList, "A_iterRemoveA_emptyList");
+		testEmptyList(A_iterNextARemove_emptyList, "A_iterNextARemove_emptyList");
 		//1-element to 2-element
 		testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA);
 		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB);

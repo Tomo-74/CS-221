@@ -201,19 +201,18 @@ public class IUArrayList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public String toString() {
-		StringBuilder description = new StringBuilder();
-		description.append('[');
+		if(isEmpty()) {
+			return "[]";
+		}
+		StringBuilder listDescription = new StringBuilder("[");
 		for(int i = 0; i < rear; i++) {
-			description.append(array[i].toString() + ", ");
+			listDescription.append(array[i].toString() + ", ");
 		}
-		if(!isEmpty()) {
-			description.delete(description.length()-2, description.length());	// If the list has elements, remove the trailing ", "
-		}
-		description.append(']');
-		return description.toString();
+		listDescription.delete(listDescription.length()-2, listDescription.length());	// If the list has elements, remove the trailing ", "
+		listDescription.append("]");
+		return listDescription.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
 		return new ALIterator();
