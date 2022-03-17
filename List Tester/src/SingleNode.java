@@ -1,23 +1,19 @@
 /**
- * 
- */
-
-/**
  * A single-linked Node for single-linked data structures
  * 
  * @author Thomas Lonowski
  * @date 3/8/22
  * @param T generic placeholder for any Object type
  */
-public class Node<T> {
-	private Node<T> next;	// Reference to the next node in the chain
+public class SingleNode<T> {
+	private SingleNode<T> next;	// Reference to the next node in the chain
 	private T element;		// Reference to the element this node represents 
 
 	/**
 	 * Constructor to initialize a new Node with given element
 	 * @param element
 	 */
-	public Node(T element) {
+	public SingleNode(T element) {
 		this(element, null);
 	}
 	
@@ -26,7 +22,7 @@ public class Node<T> {
 	 * @param element
 	 * @param next
 	 */
-	public Node(T element, Node<T> next) {
+	public SingleNode(T element, SingleNode<T> next) {
 		this.element = element;
 		this.next = next;
 	}
@@ -34,14 +30,14 @@ public class Node<T> {
 	/**
 	 * @return the next
 	 */
-	public Node<T> getNext() {
+	public SingleNode<T> getNext() {
 		return next;
 	}
 	
 	/**
 	 * @param next the next to set
 	 */
-	public void setNext(Node<T> next) {
+	public void setNext(SingleNode<T> next) {
 		this.next = next;
 	}
 	

@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
  * @param T generic placeholder for any Object type
  */
 public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
-	private Node<T> head;
-	private Node<T> tail;
+	private SingleNode<T> head;
+	private SingleNode<T> tail;
 	private int size;
 	private int modCount;
 	
@@ -25,7 +25,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	
 	@Override
 	public void addToFront(T element) {		// O(1)
-		Node<T> newNode = new Node<T>(element);
+		SingleNode<T> newNode = new SingleNode<T>(element);
 		if(isEmpty()) {
 			tail = newNode;
 		}
@@ -36,7 +36,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void addToRear(T element) {		//O(1)
-		Node<T> newNode = new Node<T>(element);
+		SingleNode<T> newNode = new SingleNode<T>(element);
 		if(isEmpty()) {
 			head = newNode;
 		} else {
@@ -54,14 +54,14 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void addAfter(T element, T target) {		//O(n)
-		Node<T> targetNode = head;	// start at beginning
+		SingleNode<T> targetNode = head;	// start at beginning
 		while(targetNode != null && !targetNode.getElement().equals(target)) {	// search until the target element is found in the list
 			targetNode = targetNode.getNext();	// targetNode becomes null if it reaches the end of the list
 		}
 		if(targetNode == null) {	// Occurs when the element isn't found in the list
 			throw new NoSuchElementException();
 		}
-		Node<T> newNode = new Node<T>(element);
+		SingleNode<T> newNode = new SingleNode<T>(element);
 		newNode.setNext(targetNode.getNext());	// Order cannot be switched, because targetElement would lose its reference to the next element
 		targetNode.setNext(newNode);
 		if(targetNode == tail) {	// If the new element was added after tail, update tail to point at the new element
@@ -76,8 +76,8 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(index < 0 || index > size) {
 			throw new IndexOutOfBoundsException();
 		}
-		Node<T> newNode = new Node<T>(element);
-		Node<T> targetNode = head;
+		SingleNode<T> newNode = new SingleNode<T>(element);
+		SingleNode<T> targetNode = head;
 		int searchIndex = 0;
 		while(searchIndex < index-1) {	// Find the element before the element at index
 			targetNode = targetNode.getNext();	// targetNode will never be null because index is guaranteed to be in bounds
@@ -116,7 +116,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		T retVal = tail.getElement();	// Save the last element to return after removal
 		
 		if(size > 1) {	// If it's not empty or a 1-element list
-			Node<T> newTail = head;
+			SingleNode<T> newTail = head;
 			while(newTail.getNext() != tail) {
 				newTail = newTail.getNext();
 			}
@@ -144,7 +144,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			}
 		}
 		else {
-			Node<T> current = head;
+			SingleNode<T> current = head;
 			while(current.getNext() != null && !current.getNext().getElement().equals(element)) {	// Loop until you find index in the list
 				current = current.getNext();
 			}
@@ -175,8 +175,8 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(index < 0 || index >= size) {	// Catches invalid indexes (this includes empty lists)
 			throw new IndexOutOfBoundsException();
 		}
-		Node<T> newNode = new Node<T>(element);
-		Node<T> current = head;
+		SingleNode<T> newNode = new SingleNode<T>(element);
+		SingleNode<T> current = head;
 		if(index == 0) {	// Case: you are resetting the first element
 			newNode.setNext(current.getNext());
 			head.setNext(newNode);
@@ -199,7 +199,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException();
 		}
-		Node<T> targetNode = head;
+		SingleNode<T> targetNode = head;
 		int searchIndex = 0;
 		while(searchIndex < index) {
 			targetNode = targetNode.getNext();
@@ -210,7 +210,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public int indexOf(T element) {	// O(n)
-		Node<T> currentNode = head;
+		SingleNode<T> currentNode = head;
 		int retIndex = -1;
 		int curIndex = 0;
 		
@@ -242,23 +242,24 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public boolean contains(T target) {
-		boolean contains = false;
-		if(isEmpty()) {		// Case: empty list
-			contains = false;
-		} else if(head.getElement().equals(target)) {	// Case: target is at the front of the list
-			contains = true;
-		} else {	// Case: target is in the middle or at the end of the list
-			Node<T> current = head;
-			while(current.getNext() != null && !current.getNext().getElement().equals(target)) {	
-				current = current.getNext();
-			}
-			if(current.getNext() == null) {
-				contains = false;
-			} else {
-				contains = true;
-			}
-		}
-		return contains;
+		  boolean contains = false;
+		  SingleNode<T> current = head;
+		  while(current != null){
+		      if(current.getElement().equals(target)){
+		          contains = true;
+		      }
+		      current = current.getNext();
+		  }
+		  return contains;
+		  
+/*
+//		   why does this result in 2% less accuracy?
+		   boolean contains = false;  
+		   if(indexOf(target) >= 0) {
+			   contains = false;;
+		   }
+		   return contains;
+*/
 	}
 
 	@Override
@@ -278,7 +279,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			return "[]";
 		}
 		StringBuilder listDescription = new StringBuilder("[");
-		Node<T> current = head;
+		SingleNode<T> current = head;
 		while(current != null) {
 			listDescription.append(current.getElement().toString() + ", ");
 			current = current.getNext();
@@ -307,8 +308,9 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 	 * Basic Iterator for IUSingleLinkedList
 	 */
 	private class SLLIterator implements Iterator<T>{
-		private Node<T> nextNode;
+		private SingleNode<T> nextNode;
 		private int iterModCount;
+		private boolean canRemove;
 		
 		/**
 		 * Initialize new iterator in front of the first element
@@ -316,6 +318,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		public SLLIterator() {
 			nextNode = head;
 			iterModCount = modCount;
+			canRemove = false;
 		}
 
 		@Override
@@ -333,12 +336,37 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			}
 			T retVal = nextNode.getElement();
 			nextNode = nextNode.getNext();
+			canRemove = true;
 			return retVal;
 		}
 		
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
+			}
+			if(!canRemove) {
+				throw new IllegalStateException();
+			}
+			if(head.getNext() == nextNode) {	// Case: removing head element
+				head = head.getNext();
+				if(head == null) {	// Case: one-element list where the element is being removed. Once the value is removed by setting head to null, tail must also be set to null.
+					tail = null;
+				}
+			} else {
+				SingleNode<T> current = head;
+				while(head.getNext().getNext() != nextNode) {	// Must find the node two elements behind next node because the element behind nextNode is the one to remove
+					current = current.getNext();
+				}
+				current.setNext(nextNode);
+				if(nextNode == null) {	// If the tail was removed, nextNode is null, and tail needs to be set to the previous element
+					tail = current;	
+				}
+			}
+			size--;
+			modCount++;
+			iterModCount++;
+			canRemove = false;
 		}
 		
 	}
