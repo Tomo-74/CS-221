@@ -77,18 +77,20 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			throw new IndexOutOfBoundsException();
 		}
 		SingleNode<T> newNode = new SingleNode<T>(element);
-		SingleNode<T> target = head;
+		SingleNode<T> current = head;
 		if(head == null) {
 			newNode.setNext(null);
 			head = newNode;
 		} else {	// Case: list size > 2
 			for(int i = 0; i < index-1; i++) {	// Find the element before the element at index
-				target = target.getNext();	// targetNode will never be null because index is guaranteed to be in bounds
+				current = current.getNext();	// current will never be null because index is guaranteed to be in bounds
 			}
-			newNode.setNext(target.getNext());
-			target.setNext(newNode);
+			if(current != null) {
+				newNode.setNext(current.getNext());
+				current.setNext(newNode);
+			}
 		}
-		if(target == tail) {
+		if(current == tail) {
 			tail = newNode;
 		}
 		modCount++;
@@ -133,7 +135,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T remove(T element) {
-		if(isEmpty()) {
+		if(head == null) {
 			throw new NoSuchElementException();
 		}
 		T retVal;
@@ -198,20 +200,18 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		}
 		SingleNode<T> newNode = new SingleNode<T>(element);
 		SingleNode<T> current = head;
-		if(index == 0) {	// Case: you are resetting the first element
+		if(index == 0) {	// Case: setting the head element
 			newNode.setNext(current.getNext());
-			head.setNext(newNode);
+			head = newNode;
 		} else {
-			int searchIndex = 0;
-			while(searchIndex < index-1) {	// Finds the element before the element at index
+			for(int i = 0; i < index-1; i++) {	// Finds the element before the element at index
 				current = current.getNext();	// current will never be null because index is guaranteed to be in bounds
-				searchIndex++;
 			}
 			newNode.setNext(current.getNext().getNext());
 			current.setNext(newNode);
-			if(current == tail) {
-				tail = newNode;
-			}
+		}
+		if(newNode.getNext() == null) {	// Case: setting the tail element / 1-element list
+			tail = newNode;
 		}
 		modCount++;
 	}
