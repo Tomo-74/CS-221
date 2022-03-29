@@ -1,3 +1,4 @@
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -7,7 +8,7 @@ import java.util.NoSuchElementException;
  */
 
 /**
- * @author tomol
+ * @author Thomas Lonowski
  *
  */
 public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
@@ -49,9 +50,48 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 	}
 
 	@Override
-	public void add(int index, T element) {
-		// TODO Auto-generated method stub
+	public void add(int index, T element) {	// Try to avoid indexed methods with linked lists
+		if(index < 0 || index > size) {
+			throw new IndexOutOfBoundsException();
+		}
 		
+		DoubleNode<T> newNode = new DoubleNode<T>(element);
+		if(index == 0) {	// Case: adding an element to the front of the list
+			newNode.setNext(head);
+			if(!isEmpty()) {
+				head.setPrevious(newNode);
+			}
+			else {	// Case: adding to empty list []
+				tail = newNode;
+			}
+			head = newNode;
+		}
+		else {
+			// TODO make efficient
+			if(index <= size/2) {	// Work from head
+				// current = head;
+			} else {	// Work from tail
+				//current = tail
+			}
+			
+			DoubleNode<T> current = head;
+			for(int i = 0; i < index-1; i++) {
+				current = current.getNext();	// Finds the element before index
+			}
+			// Update the node connections
+			newNode.setNext(current.getNext());
+			newNode.setPrevious(current);
+			current.setNext(newNode);
+			if(current != tail) {	
+				newNode.getNext().setPrevious(newNode);
+			}
+			else {	// Case: adding an element to the end of the list
+				tail = newNode;
+			}
+			
+		}
+		size++;
+		modCount++;
 	}
 
 	@Override
@@ -67,7 +107,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		}
 		T retVal = tail.getElement();
 		tail = tail.getPrevious();
-		if(tail == null) {	// Case: single-element list
+		if(tail == null) {	// Case: [A]
 			head = null;
 		} else {
 			tail.setNext(null);
@@ -79,8 +119,30 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T remove(T element) {
-		// TODO Auto-generated method stub
-		return null;
+		DoubleNode<T> current = head;
+		while(current != null && !current.getElement().equals(element)) {	// Search until the element is found or the whole list is searched through
+			current = current.getNext();
+		}
+		if(current == null) {	// If the element was not found or the list is empty
+			throw new NoSuchElementException();
+		}
+		
+		// Update node connections 
+		if(current != tail) {
+			current.getNext().setPrevious(current.getPrevious());
+		} else {	// Case: removing the tail element
+			tail = current.getPrevious();
+		}
+		if(current != head) {
+			current.getPrevious().setNext(current.getNext());
+		} else {	// Case: removing the head element
+			head = current.getNext();
+		}
+		// At this point, no nodes point to current, so it has been removed
+		
+		size--;
+		modCount++;
+		return current.getElement();
 	}
 
 	@Override
@@ -109,14 +171,12 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T first() {
-		// TODO Auto-generated method stub
-		return null;
+		return head.getElement();
 	}
 
 	@Override
 	public T last() {
-		// TODO Auto-generated method stub
-		return null;
+		return tail.getElement();
 	}
 
 	@Override
@@ -136,39 +196,95 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IUDLLiterator();
 	}
 
 	@Override
 	public ListIterator<T> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IUDLLiterator();
 	}
 
 	@Override
 	public ListIterator<T> listIterator(int startingIndex) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private class DLLIterator implements Iterator<T> {
-
+	/*
+	 * List iterator IUDLL - also acts as basic Iterator
+	 */
+	private class IUDLLiterator implements ListIterator<T> {
+		private DoubleNode<T> nextNode;
+		private int iterModCount;
+		private int nextIndex;
+		private boolean canRemove;
+		
+		/*
+		 * Basic constructor for DLL list iterator
+		 */
+		public IUDLLiterator() {
+			nextNode = head;
+			iterModCount = nextIndex = 0;
+			canRemove = false;
+		}
+		
 		@Override
 		public boolean hasNext() {
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
+			}
+			return nextNode != null;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T retVal = nextNode.getElement();
+			nextNode = nextNode.getNext();
+			canRemove = true;
+			return retVal;
+		}
+		
+		@Override
+		public boolean hasPrevious() {
 			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
-		public T next() {
+		public T previous() {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
+		@Override
+		public int nextIndex() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int previousIndex() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 		@Override
 		public void remove() {
 			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void set(T e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void add(T e) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}
