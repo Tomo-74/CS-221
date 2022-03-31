@@ -27,26 +27,52 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public void addToFront(T element) {
-		// TODO Auto-generated method stub
-		
+		DoubleNode<T> newNode = new DoubleNode<>(element);
+		head.setPrevious(newNode);
+		newNode.setNext(head);
+		newNode.setPrevious(null);
+		head = newNode;
+		size++;
+		modCount++;
 	}
 
 	@Override
 	public void addToRear(T element) {
-		// TODO Auto-generated method stub
-		
+		DoubleNode<T> newNode = new DoubleNode<>(element);
+		tail.setNext(newNode);
+		newNode.setPrevious(tail);
+		newNode.setNext(null);
+		tail = newNode;
+		size++;
+		modCount++;
 	}
 
 	@Override
 	public void add(T element) {
-		// TODO Auto-generated method stub
-		
+		addToRear(element);
 	}
 
 	@Override
 	public void addAfter(T element, T target) {
-		// TODO Auto-generated method stub
-		
+		DoubleNode<T> newNode = new DoubleNode<>(element);
+		DoubleNode<T> current = head;
+		while(current != null && !current.getElement().equals(target)) {
+			current = current.getNext();
+		}
+		if(current == null) {	// If list is empty or target is not found
+			throw new NoSuchElementException();
+		}
+		newNode.setNext(current.getNext());
+		newNode.setPrevious(current);
+		if(current == tail) {
+			current.setNext(newNode);
+			tail = newNode;
+		} else {
+			current.getNext().setPrevious(newNode);
+			current.setNext(newNode);
+		}
+		size++;
+		modCount++;
 	}
 
 	@Override
@@ -96,8 +122,19 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T removeFirst() {
-		// TODO Auto-generated method stub
-		return null;
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		T retVal = head.getElement();
+		if(head == tail) {	// If it's a one element list [A]
+			head = tail = null;
+		} else {	// If it's a multi-element list [A, B, ...]
+			head.getNext().setPrevious(null);
+			head = head.getNext();
+		}
+		size--;
+		modCount++;
+		return retVal;
 	}
 
 	@Override
@@ -147,8 +184,31 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		if(index < 0 || index >= size) {	// Case: empty list []
+			throw new IndexOutOfBoundsException();
+		}
+		T retVal = head.getElement();
+		if(head == tail) {	// Case: one-element list [A]
+			head = tail = null;
+		} else {	// Case: multi-element list [A, B, ...]
+			DoubleNode<T> current = head;
+			for(int i = 0; i < index-1; i++) {		// Get element before element to remove
+				current = current.getNext();
+			}
+			if(current == head && index != 1) {	// Case: removing head element
+				head = head.getNext();
+				head.setPrevious(current.getPrevious());
+			} else {
+				retVal = current.getNext().getElement();
+				current.setNext(current.getNext().getNext());
+				if(current.getNext() == null) {	// Case: removing tail element
+					tail = current;
+				} else {
+					current.getNext().setPrevious(current);
+				}
+			}
+		}
+		return retVal;
 	}
 
 	@Override
