@@ -241,6 +241,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public boolean contains(T target) {
+		// TODO
 		return false;
 	}
 
@@ -276,20 +277,17 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		private DoubleNode<T> nextNode;
 		private int iterModCount;
 		private int nextIndex;
-		private boolean canRemove;
+		DoubleNode<T> lastReturned;
 		
 		/*
 		 * Basic constructor, initializes iterator before first element.
 		 */
 		public IUDLLiterator() {
-			nextNode = head;
-			iterModCount = nextIndex = 0;
-			canRemove = false;
+			this(0);
 		}
 		
 		/*
-		 * Indexed constructor, initializes iterator before startingIndex
-		 * 
+		 * Indexed constructor, initializes iterator before startingIndex.
 		 * @param startingIndex index that would be next
 		 */
 		public IUDLLiterator(int startingIndex) {
@@ -329,9 +327,8 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 				throw new NoSuchElementException();
 			}
 			T retVal = nextNode.getElement();
+			lastReturned = nextNode;
 			nextNode = nextNode.getNext();
-			
-			canRemove = true;
 			nextIndex++;
 			return retVal;
 		}
@@ -349,13 +346,13 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			if(!hasPrevious()) {
 				throw new NoSuchElementException();
 			}
-			if(nextNode == null) {
-				nextNode = tail;
+			if(nextNode == null) {	// If iterator is after the tail element
+				nextNode = tail;	// Move it to the left
 			} else {
-				nextNode.getPrevious();
+				nextNode = nextNode.getPrevious();
 			}
+			lastReturned = nextNode;
 			nextIndex--;
-			canRemove = true;
 			return nextNode.getElement();
 		}
 
@@ -371,22 +368,39 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 		@Override
 		public void remove() {
-			if(canRemove) {
-				
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
 			}
+			if(lastReturned == null) {	// If next() or previous() has not been called
+				throw new IllegalStateException();
+			}
+			
+			if(lastReturned != tail) {
+				lastReturned.getNext().setPrevious(lastReturned.getPrevious());
+			} else {
+				tail = lastReturned.getPrevious();
+			}
+			if(lastReturned != head) {
+				lastReturned.getPrevious().setNext(lastReturned.getNext());
+			} else {
+				head = lastReturned.getNext();
+			}
+			if(lastReturned != nextNode) {	// If last move was next()
+				nextIndex--;
+			} else {	// Last move was previous()
+				nextNode = nextNode.getNext();
+			}
+			lastReturned = null;
 		}
 
 		@Override
 		public void set(T e) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void add(T e) {
 			// TODO Auto-generated method stub
-			
 		}
-		
 	}
 }
