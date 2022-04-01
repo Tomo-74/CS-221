@@ -266,7 +266,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public ListIterator<T> listIterator(int startingIndex) {
-		return null;
+		return new IUDLLiterator(startingIndex);
 	}
 
 	/*
@@ -279,12 +279,40 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		private boolean canRemove;
 		
 		/*
-		 * Basic constructor for DLL list iterator
+		 * Basic constructor, initializes iterator before first element.
 		 */
 		public IUDLLiterator() {
 			nextNode = head;
 			iterModCount = nextIndex = 0;
 			canRemove = false;
+		}
+		
+		/*
+		 * Indexed constructor, initializes iterator before startingIndex
+		 * 
+		 * @param startingIndex index that would be next
+		 */
+		public IUDLLiterator(int startingIndex) {
+			if(startingIndex < 0 || startingIndex >= size) {
+				throw new IndexOutOfBoundsException();
+			}
+			nextNode = head;
+			if(startingIndex < size/2) {	// If you're working in the front of the list
+				for(int i = 0; i < startingIndex; i++){
+					nextNode = nextNode.getNext();
+				}
+			} else {
+				if(startingIndex == size) {
+					nextNode = null;
+				} else {
+					nextNode = tail;
+					for(int i = 0; i < size-startingIndex-1; i++) {
+						nextNode = nextNode.getPrevious();
+					}
+				}
+					
+			}
+			nextIndex = startingIndex;
 		}
 		
 		@Override
@@ -302,37 +330,50 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			}
 			T retVal = nextNode.getElement();
 			nextNode = nextNode.getNext();
+			
 			canRemove = true;
+			nextIndex++;
 			return retVal;
 		}
 		
 		@Override
 		public boolean hasPrevious() {
-			// TODO Auto-generated method stub
-			return false;
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
+			}
+			return nextNode != head;
 		}
 
 		@Override
 		public T previous() {
-			// TODO Auto-generated method stub
-			return null;
+			if(!hasPrevious()) {
+				throw new NoSuchElementException();
+			}
+			if(nextNode == null) {
+				nextNode = tail;
+			} else {
+				nextNode.getPrevious();
+			}
+			nextIndex--;
+			canRemove = true;
+			return nextNode.getElement();
 		}
 
 		@Override
 		public int nextIndex() {
-			// TODO Auto-generated method stub
-			return 0;
+			return nextIndex;
 		}
 
 		@Override
 		public int previousIndex() {
-			// TODO Auto-generated method stub
-			return 0;
+			return nextIndex-1;
 		}
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
+			if(canRemove) {
+				
+			}
 		}
 
 		@Override
