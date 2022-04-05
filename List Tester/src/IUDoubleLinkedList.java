@@ -9,7 +9,8 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Thomas Lonowski
- *
+ * @version Sp22 CS 221 Version 1.0
+ * @date 4/5/21
  */
 public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 	private DoubleNode<T> head;
@@ -18,7 +19,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 	private int modCount;
 	
 	/**
-	 * Default constructor for a double linked list
+	 * Default constructor for a double linked list.
 	 */
 	public IUDoubleLinkedList() {
 		head = tail = null;
@@ -34,6 +35,11 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		head = newNode;
 		size++;
 		modCount++;
+		
+		/*
+		 * ListIterator<T> lit = listIterator();
+		 * lit.add(element);
+		 */
 	}
 
 	@Override
@@ -45,6 +51,11 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		tail = newNode;
 		size++;
 		modCount++;
+		
+		/*
+		 * ListIterator<T> lit = listIterator(size);
+		 * lit.add(element);
+		 */
 	}
 
 	@Override
@@ -73,6 +84,21 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		}
 		size++;
 		modCount++;
+		
+		/*
+		 * ListIterator<T> lit = listIterator();
+		 * boolean foundTarget = false;
+		 * while(lit.hasNext() && !foundIt){
+		 * 		if(lit.next().equals(target)){
+		 * 			lit.add(element);
+		 * 			foundIt = true;
+		 * 		}
+		 * }
+		 * 
+		 * if(!foundIt){
+		 * 		throw new NoSuchElementException();
+		 * }
+		 */
 	}
 
 	@Override
@@ -118,6 +144,11 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		}
 		size++;
 		modCount++;
+		
+		/*
+		 * ListIterator<T> lit = listIterator(index);
+		 * lit.add(element);
+		 */
 	}
 
 	@Override
@@ -135,6 +166,13 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		size--;
 		modCount++;
 		return retVal;
+		
+		/*
+		 * ListIterator<T> lit = listIterator();
+		 * 	T retVal = lit.next();
+		 * 	lit.remove();
+		 * 	return retVal;
+		 */
 	}
 
 	@Override
@@ -142,6 +180,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(isEmpty()) {
 			throw new NoSuchElementException();
 		}
+		
 		T retVal = tail.getElement();
 		tail = tail.getPrevious();
 		if(tail == null) {	// Case: [A]
@@ -149,9 +188,17 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		} else {
 			tail.setNext(null);
 		}
+		
 		size--;
 		modCount++;
 		return retVal;
+		
+		/*
+		 * ListIterator<T> lit = listIterator(size);
+		 * T retVal = lit.previous();
+		 * lit.remove();
+		 * return retVal;
+		 */
 	}
 
 	@Override
@@ -231,11 +278,17 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 	@Override
 	public T first() {
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
 		return head.getElement();
 	}
 
 	@Override
 	public T last() {
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
 		return tail.getElement();
 	}
 
@@ -254,6 +307,13 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 	public int size() {
 		return size;
 	}
+	
+	@Override
+	public String toString() {
+		// TODO write method
+		// use iterator methods, must be linear
+		return null;
+	}
 
 	@Override
 	public Iterator<T> iterator() {
@@ -270,8 +330,8 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		return new IUDLLiterator(startingIndex);
 	}
 
-	/*
-	 * List iterator IUDLL - also acts as basic Iterator
+	/**
+	 * List iterator for an indexed unsorted Double Linked List. Also acts as basic Iterator.
 	 */
 	private class IUDLLiterator implements ListIterator<T> {
 		private DoubleNode<T> nextNode;
@@ -279,21 +339,24 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		private int nextIndex;
 		DoubleNode<T> lastReturned;
 		
-		/*
-		 * Basic constructor, initializes iterator before first element.
+		/**
+		 * Basic constructor, initializes iterator BEFORE first element.
 		 */
 		public IUDLLiterator() {
 			this(0);
 		}
 		
-		/*
-		 * Indexed constructor, initializes iterator before startingIndex.
+		/**
+		 * Indexed constructor, initializes iterator BEFORE startingIndex. Determines whether working from the front
+		 * or the end of the list is more efficient.
+		 * 
 		 * @param startingIndex index that would be next
 		 */
 		public IUDLLiterator(int startingIndex) {
 			if(startingIndex < 0 || startingIndex >= size) {
 				throw new IndexOutOfBoundsException();
 			}
+			iterModCount = modCount;
 			nextNode = head;
 			if(startingIndex < size/2) {	// If you're working in the front of the list
 				for(int i = 0; i < startingIndex; i++){
@@ -390,17 +453,44 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			} else {	// Last move was previous()
 				nextNode = nextNode.getNext();
 			}
+			size--;
+			modCount++;
+			iterModCount++;
 			lastReturned = null;
+//			nextIndex--;
 		}
 
 		@Override
-		public void set(T e) {
-			// TODO Auto-generated method stub
+		public void set(T element) {
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
+			}
+			// TODO write this method
 		}
 
 		@Override
-		public void add(T e) {
-			// TODO Auto-generated method stub
+		public void add(T element) {
+			if(iterModCount != modCount) {
+				throw new ConcurrentModificationException();
+			}
+			DoubleNode<T> newNode = new DoubleNode<>(element);
+			if(nextNode != null) {	// Case: not adding to tail
+				newNode.setPrevious(nextNode.getPrevious());
+				newNode.setNext(nextNode);
+				nextNode.setPrevious(newNode);
+			} else {	// Case: adding to tail end
+				newNode.setPrevious(tail);
+				tail = newNode;
+			}
+			if(newNode.getPrevious() != null) {
+				newNode.getPrevious().setNext(newNode);
+			} else {
+				head = newNode;
+			}
+			size++;
+			modCount++;
+			iterModCount++;
+			nextIndex++;
 		}
 	}
 }
