@@ -171,15 +171,18 @@ public class ListTester {
 		testSingleElementList(emptyList_addToRearA_A, "emptyList_addToRearA_A", LIST_A, STRING_A);
 		testSingleElementList(emptyList_addA_A, "emptyList_addA_A", LIST_A, STRING_A);
 		testSingleElementList(emptyList_add0A_A, "emptyList_add0A_A", LIST_A, STRING_A);
+		testSingleElementList(emptyList_listIterAddA_A, "emptyList_listIterAddA_A", LIST_A, STRING_A);
 		//1-element to empty list
 		testEmptyList(A_removeFirst_emptyList, "A_removeFirst_emptyList");
 		testEmptyList(A_removeLast_emptyList, "A_removeLast_emptyList");
 		testEmptyList(A_removeA_emptyList, "A_removeA_emptyList");
 		testEmptyList(A_remove0_emptyList, "A_remove0_emptyList");
 		testEmptyList(A_iterNextARemove_emptyList, "A_iterNextARemove_emptyList");
+		testEmptyList(A_iterPreviousRemove_emptyList, "A_iterPreviousRemove_emptyList");
 		//1-element to 2-element
 		// testTwoElementList(A_addToFrontB_BA, "A_addToFrontB_BA", LIST_BA, STRING_BA);
 		testTwoElementList(A_addAfterBA_AB, "A_addAfterBA_AB", LIST_AB, STRING_AB);
+		testTwoElementList(A_addToRearB_AB, "A_addToRearB_AB", LIST_AB, STRING_AB);
 		//1-element to changed 1-element via set()
 		testSingleElementList(A_set0B_B, "A_set0B_B", LIST_B, STRING_B);
 		//2-element to 1-element
@@ -311,6 +314,18 @@ public class ListTester {
 	}
 	private Scenario<Integer> A_iterNextARemove_emptyList = () -> A_iterNextARemove_emptyList();
 	
+	/**
+	 * Scenario: [A] -> iterPreviousRemove() -> []
+	 * @return [] after previous(), remove()
+	 */
+	private IndexedUnsortedList<Integer> A_iterPreviousRemove_emptyList() {
+		IndexedUnsortedList<Integer> list = emptyList_addA_A();
+		ListIterator<Integer> it = list.listIterator(1);
+		it.previous();
+		it.remove();
+		return list;
+	}
+	private Scenario<Integer> A_iterPreviousRemove_emptyList = () -> A_iterPreviousRemove_emptyList();
 	
 	//////////////////////////////////////////////////////
 	// XXX SCENARIOS RESULTING IN A ONE-ELEMENT LIST
@@ -400,6 +415,17 @@ public class ListTester {
 		return list;
 	}
 	private Scenario<Integer> AB_iterNextBRemove_A = () -> AB_iterNextBRemove_A();
+	
+	/** Scenario: [] -> listIterAddA -> [A]
+	 * @return [A] after add()
+	 */
+	private IndexedUnsortedList<Integer> emptyList_listIterAddA_A() {
+		IndexedUnsortedList<Integer> list = newList();
+		ListIterator<Integer> it = list.listIterator();
+		it.add(ELEMENT_A);
+		return list;
+	}
+	private Scenario<Integer> emptyList_listIterAddA_A = () -> emptyList_listIterAddA_A();
 	
 	
 	//////////////////////////////////////////////////////
@@ -498,6 +524,17 @@ public class ListTester {
 	}
 	private Scenario<Integer> ABC_iterNextBRemove_AC = () -> ABC_iterNextBRemove_AC();
 
+	/**
+	 * Scenario: [A] -> addToRear(B) -> [A,B]
+	 * @return [A,B] after addToRear(B)
+	 */
+	private IndexedUnsortedList<Integer> A_addToRearB_AB() {
+		IndexedUnsortedList<Integer> list = newList();
+		list.add(ELEMENT_A);
+		list.addToRear(ELEMENT_B);
+		return list;
+	}
+	private Scenario<Integer> A_addToRearB_AB = () -> A_addToRearB_AB();
 	
 	//////////////////////////////////////////////////////
 	// XXX SCENARIOS RESULTING IN A THREE-ELEMENT LIST

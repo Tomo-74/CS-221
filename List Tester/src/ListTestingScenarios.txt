@@ -11,7 +11,7 @@ However, since implementing full coverage may require more time than available, 
 4) [] -> add(A) -> [A]			*
 5) [] -> add(0,A) -> [A]		*
 6) [A] -> addToFront(B) -> [B,A]*
-7) [A] -> addToRear(B) -> [A,B]
+7) [A] -> addToRear(B) -> [A,B]	*
 8) [A] -> addAfter(B,A) -> [A,B]*
 9) [A] -> add(B) -> [A,B]
 10) [A] -> add(0,B) -> [B,A]
@@ -89,67 +89,3 @@ including ListIterator with remove(), add(), and set() methods:
  
 ArrayList/SLL with fully-implemented Iterator: 49 scenarios
 DLL with fully-implemented ListIterator: 82 scenarios
- 
-An example of one test scenario for IndexedUnsortedList with Iterator, only:
-  Add a new element to the front of a list containing one element.
-  Starting state: [A]
-  Change: Call addToFront(B)
-  Resulting state: [B, A]
-  Tests:
-    addToFront(C) throws no Exceptions
-    addToRear(C) throws no Exceptions
-    addAfter(C, B) throws no Exceptions
-    addAfter(C, A) throws no Exceptions
-    addAfter(C, D) throws NoSuchElementException
-    add(C) throws no Exception
-    add(-1,C) throws IndexOutOfBoundsException
-    add(0,C) throws no Exception
-    add(1,C) throws no Exception
-    add(2,C) throws no Exception
-    add(3,C) throws IndexOutOfBoundsException
-    removeFirst() returns B
-    removeLast() returns A
-    remove(A) returns A
-    remove(B) returns B
-    remove(C) throws NoSuchElementException
-    remove(-1) throws IndexOutOfBoundsException
-    remove(0) returns B
-    remove(1) returns A
-    remove(2) throws IndexOutOfBoundsException
-    set(-1,C) throws IndexOutOfBoundsException
-    set(0,C) throws no Exception
-    set(1,C) throws no Exception
-    set(2,C) throws IndexOutOfBoundsException
-    get(-1) throws IndexOutOfBoundsException
-    get(0) returns B
-    get(1) returns A
-    get(2) throws IndexOutOfBoundsException
-    indexOf(A) returns 1
-    indexOf(B) returns 0
-    indexOf(C) returns -1
-    first() returns B
-    last() returns A
-    contains(A) returns true
-    contains(B) returns true
-    contains(C) returns false
-    isEmpty() returns false
-    size() returns 2
-    iterator() returns an Iterator reference
-    iterator hasNext() returns true
-    iterator next() returns B
-    iterator remove() throws IllegalStateException
-    iterator hasNext() after next() returns true
-    iterator next() after next() returns A
-    iterator remove() after next() throws no Exception
-    iterator hasNext() after next() and remove() returns true
-    iterator next() after next() and remove() returns A
-    iterator remove() after next() and remove() throws IllegalStateException
-    iterator hasNext() after 2x next() returns false
-    iterator next() after 2x next() throws NoSuchElementException
-    iterator remove() after 2x next() throws no Exception
-    iterator remove() after 2x next() and remove() throws IllegalStateException
-    listIterator() throws UnsupportedOperationException
-    listIterator(0) throws UnsupportedOperationException
-    toString() returns "[B, A]"
-    
-
