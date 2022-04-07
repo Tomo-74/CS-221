@@ -361,10 +361,11 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		description.append("[");
 
 		if(!isEmpty()) {
-			ListIterator<T> lit = listIterator();
+			ListIterator<T> lit = listIterator(0);
 			for(int i = 0; i < size; i++) {
-				description.append(lit.next().toString());
+				description.append(lit.next() + ", ");
 			}
+			description.delete(description.length()-2, description.length());
 		}
 		description.append("]");
 		return description.toString();
@@ -390,9 +391,9 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 	 */
 	private class IUDLLiterator implements ListIterator<T> {
 		private DoubleNode<T> nextNode;
-		private int iterModCount;
 		private int nextIndex;
 		DoubleNode<T> lastReturned;
+		private int iterModCount;
 		
 		/**
 		 * Basic constructor, initializes iterator BEFORE first element.
@@ -426,7 +427,6 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 						nextNode = nextNode.getPrevious();
 					}
 				}
-					
 			}
 			nextIndex = startingIndex;
 		}
@@ -512,7 +512,6 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			modCount++;
 			iterModCount++;
 			lastReturned = null;
-			nextIndex--;	// Possible incorrect, but I don't think so
 		}
 
 		@Override

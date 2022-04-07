@@ -50,12 +50,12 @@ However, since implementing full coverage may require more time than available, 
 43) [A,B,C] -> set(2,D) -> [A,B,D]		*
 
 including Iterator remove() method, add the following:
-44) [A] -> iterator remove() after next() returns A -> []
+44) [A] -> iterator remove() after next() returns A -> []			*
 45) [A,B] -> iterator remove() after next() returns A -> [B]		*
 46) [A,B] -> iterator remove() after next() returns B -> [A]		*
-47) [A,B,C] -> iterator remove() after next() returns A -> [B,C]
+47) [A,B,C] -> iterator remove() after next() returns A -> [B,C]	*
 48) [A,B,C] -> iterator remove() after next() returns B -> [A,C]	*
-49) [A,B,C] -> iterator remove() after next() returns C -> [A,B]
+49) [A,B,C] -> iterator remove() after next() returns C -> [A,B]	*
  
 including ListIterator with remove(), add(), and set() methods:
 50-55) same as Iterator remove() after next() scenarios above
