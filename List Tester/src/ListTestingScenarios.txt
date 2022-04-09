@@ -46,7 +46,7 @@ However, since implementing full coverage may require more time than available, 
 39) [A,B,C] -> remove(1) -> [A,C]
 40) [A,B,C] -> remove(2) -> [A,B]
 41) [A,B,C] -> set(0,D) -> [D,B,C]		*
-42) [A,B,C] -> set(1,D) -> [A,D,C]
+42) [A,B,C] -> set(1,D) -> [A,D,C]		*
 43) [A,B,C] -> set(2,D) -> [A,B,D]		*
 
 including Iterator remove() method, add the following:
@@ -60,19 +60,19 @@ including Iterator remove() method, add the following:
 including ListIterator with remove(), add(), and set() methods:
 50-55) same as Iterator remove() after next() scenarios above
 56) [A] -> iterator remove() after previous() returns A -> []			*
-57) [A,B] -> iterator remove() after previous() returns A -> [B]
+57) [A,B] -> iterator remove() after previous() returns A -> [B]		*
 58) [A,B] -> iterator remove() after previous() returns B -> [A]
-59) [A,B,C] -> iterator remove() after previous() returns A -> [B,C]
+59) [A,B,C] -> iterator remove() after previous() returns A -> [B,C]	*
 60) [A,B,C] -> iterator remove() after previous() returns B -> [A,C]
 61) [A,B,C] -> iterator remove() after previous() returns C -> [A,B]
 62) [] -> iterator add(A) -> [A]										*
 63) [A] -> iterator add(B) with new iterator -> [B,A]
 64) [A] -> iterator add(B) after next() returns A -> [A,B]
 65) [A] -> iterator add(B) after previous() returns A -> [B,A]
-66) [A,B] -> iterator add(C) with new iterator -> [C,A,B]
-67) [A,B] -> iterator add(C) after next() returns A -> [A,C,B]
-68) [A,B] -> iterator add(C) after next() returns B -> [A,B,C]
-69) [A,B] -> iterator add(C) after previous() returns A -> [C,A,B]
+66) [A,B] -> iterator add(C) with new iterator -> [C,A,B]				*
+67) [A,B] -> iterator add(C) after next() returns A -> [A,C,B]			*
+68) [A,B] -> iterator add(C) after next() returns B -> [A,B,C]			*
+69) [A,B] -> iterator add(C) after previous() returns A -> [C,A,B]		*
 70) [A,B] -> iterator add(C) after previous() returns B -> [A,C,B]
 71) [A] -> iterator set(B) after next() returns A -> [B]
 72) [A] -> iterator set(B) after previous() returns A -> [B]
@@ -80,10 +80,10 @@ including ListIterator with remove(), add(), and set() methods:
 74) [A,B] -> iterator set(C) after next() returns B -> [A,C]
 75) [A,B] -> iterator set(C) after previous() returns A -> [C,B]
 76) [A,B] -> iterator set(C) after previous() returns B -> [A,C]
-77) [A,B,C] -> iterator set(D) after next() returns A -> [D,B,C]
-78) [A,B,C] -> iterator set(D) after next() returns B -> [A,D,C]
+77) [A,B,C] -> iterator set(D) after next() returns A -> [D,B,C]		*	
+78) [A,B,C] -> iterator set(D) after next() returns B -> [A,D,C]		*
 79) [A,B,C] -> iterator set(D) after next() returns C -> [A,B,D]
-80) [A,B,C] -> iterator set(D) after previous() returns A -> [D,B,C]
+80) [A,B,C] -> iterator set(D) after previous() returns A -> [D,B,C]	*
 81) [A,B,C] -> iterator set(D) after previous() returns B -> [A,D,C]
 82) [A,B,C] -> iterator set(D) after previous() returns C -> [A,B,D]
  

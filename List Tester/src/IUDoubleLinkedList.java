@@ -231,12 +231,6 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		size--;
 		modCount++;
 		return current.getElement();
-		
-//		int index = indexOf(element);
-//		ListIterator<T> lit = listIterator(index);
-//		T retVal = lit.next();
-//		lit.remove();
-//		return retVal;
 	}
 
 	@Override
@@ -435,16 +429,24 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			nextIndex = startingIndex;
 		}
 		
-		@Override
-		public boolean hasNext() {
+		/**
+		 * Convenience method. Simply runs a concurrent modification check.
+		 */
+		private void modificationCheck() {
 			if(iterModCount != modCount) {
 				throw new ConcurrentModificationException();
 			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			modificationCheck();
 			return nextNode != null;
 		}
 
 		@Override
 		public T next() {
+			modificationCheck();
 			if(!hasNext()) {
 				throw new NoSuchElementException();
 			}
@@ -457,14 +459,13 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 		
 		@Override
 		public boolean hasPrevious() {
-			if(iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+			modificationCheck();
 			return nextNode != head;
 		}
 
 		@Override
 		public T previous() {
+			modificationCheck();
 			if(!hasPrevious()) {
 				throw new NoSuchElementException();
 			}
@@ -480,19 +481,19 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 		@Override
 		public int nextIndex() {
+			modificationCheck();
 			return nextIndex;
 		}
 
 		@Override
 		public int previousIndex() {
+			modificationCheck();
 			return nextIndex-1;
 		}
 
 		@Override
 		public void remove() {
-			if(iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+			modificationCheck();
 			if(lastReturned == null) {	// If next() or previous() has not been called
 				throw new IllegalStateException();
 			}
@@ -518,11 +519,10 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 			lastReturned = null;
 		}
 
+
 		@Override
 		public void set(T element) {
-			if(iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+			modificationCheck();
 			if(lastReturned == null) {	// If next() or previous() has not been called
 				throw new IllegalStateException();
 			}
@@ -546,9 +546,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 
 		@Override
 		public void add(T element) {
-			if(iterModCount != modCount) {
-				throw new ConcurrentModificationException();
-			}
+			modificationCheck();
 			DoubleNode<T> newNode = new DoubleNode<>(element);
 			if(nextNode != null) {	// Case: not adding to tail
 				newNode.setPrevious(nextNode.getPrevious());
@@ -556,6 +554,7 @@ public class IUDoubleLinkedList<T> implements IndexedUnsortedList<T> {
 				nextNode.setPrevious(newNode);
 			} else {	// Case: adding to tail end
 				newNode.setPrevious(tail);
+//				newNode.setNext(null);
 				tail = newNode;
 			}
 			if(newNode.getPrevious() != null) {
