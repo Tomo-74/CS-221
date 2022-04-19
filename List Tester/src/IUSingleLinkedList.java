@@ -93,8 +93,8 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 		if(current == tail) {
 			tail = newNode;
 		}
-		modCount++;
 		size++;
+		modCount++;
 	}
 
 	@Override
@@ -340,6 +340,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 			if(!hasNext()) {
 				throw new NoSuchElementException();
 			}
+			
 			T retVal = nextNode.getElement();
 			nextNode = nextNode.getNext();
 			canRemove = true;

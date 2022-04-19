@@ -8,9 +8,7 @@ import java.util.*;
  *  Note: "Unsorted" only means that it is not inherently maintained
  *  in a sorted order. It may or may not be sorted.
  *
- * @author CS 221
- *
- * @param <T> - class of objects stored in the list 
+ * @param <T> - generic placeholder for any Object type
  */
 public interface IndexedUnsortedList<T> extends Iterable<T>
 {
