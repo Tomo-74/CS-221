@@ -1,4 +1,3 @@
-
 public class Recursion {
 	public static void main(String[] args) {
 		String str = "Hello";
@@ -90,6 +89,4 @@ public class Recursion {
 			list.add(right.removeFirst());
 		}		
 	}
-
-	
 }
