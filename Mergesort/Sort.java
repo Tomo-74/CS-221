@@ -68,47 +68,42 @@ public class Sort
 	 */
 	private static <T extends Comparable<T>> void mergesort(IndexedUnsortedList<T> list)
 	{
-		final int TARGET_LIST_SIZE = list.size();
-		
-		// Base case
-		if(list.size() <= 1) {
-			return;
-		}
-		
-		IndexedUnsortedList<T> left = newList();
-		IndexedUnsortedList<T> right = newList();
-			
-		for(int i = 0; i < list.size() / 2; i++) {		// Populate left list
-			left.add(list.first());
-			list.removeFirst();
-		}
-		for(int i = 0; i < list.size() / 2; i++) {		// Populate right list
-			right.add(list.first());
-			list.removeFirst();
-		}
-		
-		// Recursively sort left and right lists
-		mergesort(left);
-
-		// Reassemble the final list
-		while(left.size() != TARGET_LIST_SIZE) {
-			if(left.first().compareTo(right.first()) < 0) {
-				left.add(right.first());
-			} else {
-				right.add(left.first());
-			}
-		}
-		
-		mergesort(right);
-		
-		// Reassemble the final list
-		while(left.size() != TARGET_LIST_SIZE) {
-			if(left.first().compareTo(right.first()) < 0) {
-				left.add(right.first());
-			} else {
-				right.add(left.first());
-			}
-		}	
+        
+    	int size = list.size();
+        
+        if(size <= 1) {	// Base case
+            return;
+        }
+        
+        IndexedUnsortedList<T> left = newList();
+        IndexedUnsortedList<T> right = newList();
+        
+        for(int i = 0; i < size / 2; i++) {		// Populate left list
+        	left.add(list.removeFirst());
+        }
+        
+        for(int i = 0; i < size / 2; i++) {		// Populate right list
+        	right.add(list.removeFirst());
+        }
+        
+        // Recursively sort left and right lists
+        mergesort(left);
+        mergesort(right);
+        
+        // Reassemble the final list
+        while(!left.isEmpty() && !right.isEmpty()) {
+            if(left.first().compareTo(right.first()) < 0) {
+                list.add(left.removeFirst());
+            } else {
+                list.add(right.first());
+            }
+        }	
+        while(!left.isEmpty()) {
+        	list.add(left.removeFirst());
+        }
+        while(!right.isEmpty()) {
+        	list.add(right.removeFirst());
+        }	
 	}
 		
 	/**
