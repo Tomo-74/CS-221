@@ -45,17 +45,24 @@ public class Practice {
         // Recursively sort left and right lists
         mergesort(left);
         mergesort(right);
-        
+
         // Reassemble the final list
     	while(!left.isEmpty() && !right.isEmpty()) {
     		if(left.first().compareTo(right.first()) < 0) {
     			list.add(left.removeFirst());
-    			list.add(right.removeFirst());
+//    			list.add(right.removeFirst());
     		} else {
     			list.add(right.removeFirst());
-    			list.add(left.removeFirst());
+//    			list.add(left.removeFirst());
     		}
-    	}	
+    	}
+    	
+    	while(!left.isEmpty()) {
+    		list.add(left.removeFirst());
+    	}
+    	while(!right.isEmpty()) {
+    		list.add(right.removeFirst());
+    	}
         System.out.print("Reassembled List: " + list + "\n\n");
     }
     

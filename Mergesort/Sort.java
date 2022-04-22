@@ -67,45 +67,41 @@ public class Sort
 	 *            The list to be sorted, implements IndexedUnsortedList interface 
 	 */
 	private static <T extends Comparable<T>> void mergesort(IndexedUnsortedList<T> list) {
-    	int size = list.size();
+		int size = list.size();
         
         if(size <= 1) {	// Base case
             return;
         }
-        
+
         IndexedUnsortedList<T> left = newList();
         IndexedUnsortedList<T> right = newList();
         
-//        System.out.println("List size: " + list.size());
-//        System.out.println("Size / 2: " + list.size() / 2);
-//        System.out.println("List: " + list);
-        for(int i = 0; i < size / 2; i++) {		// Populate left list
-        	left.add(list.removeFirst());
-        }
-//        System.out.println("Left: " + left);
-        
-        for(int i = 0; i < size / 2; i++) {		// Populate right list
+    	for(int i = 0; i < size / 2; i++) {		// Populate left list
+    		left.add(list.removeFirst());
+    	}
+        while(!list.isEmpty()) {
         	right.add(list.removeFirst());
         }
-//        System.out.println("Right: " + right + "\n");
         
         // Recursively sort left and right lists
         mergesort(left);
         mergesort(right);
-//        System.out.println("Left: " + left);
-//        System.out.println("Right: " + right);
-        
+
         // Reassemble the final list
-        while(!left.isEmpty() && !right.isEmpty()) {
-            if(left.first().compareTo(right.first()) < 0) {
-                list.add(left.removeFirst());
-                list.add(right.removeFirst());
-            } else {
-                list.add(right.removeFirst());
-                list.add(left.removeFirst());
-            }
-        }	
-//        System.out.print("Reassembled List: " + list + "\n\n");	
+    	while(!left.isEmpty() && !right.isEmpty()) {
+    		if(left.first().compareTo(right.first()) < 0) {
+    			list.add(left.removeFirst());
+    		} else {
+    			list.add(right.removeFirst());
+    		}
+    	}
+    	
+    	while(!left.isEmpty()) {
+    		list.add(left.removeFirst());
+    	}
+    	while(!right.isEmpty()) {
+    		list.add(right.removeFirst());
+    	}
 	}
 		
 	/**
@@ -123,44 +119,40 @@ public class Sort
 	 */
 	private static <T> void mergesort(IndexedUnsortedList<T> list, Comparator<T> c)
 	{
-    	int size = list.size();
+		int size = list.size();
         
         if(size <= 1) {	// Base case
             return;
         }
-        
+
         IndexedUnsortedList<T> left = newList();
         IndexedUnsortedList<T> right = newList();
         
-//        System.out.println("List size: " + list.size());
-//        System.out.println("Size / 2: " + list.size() / 2);
-//        System.out.println("List: " + list);
-        for(int i = 0; i < size / 2; i++) {		// Populate left list
-        	left.add(list.removeFirst());
-        }
-//        System.out.println("Left: " + left);
-        
-        for(int i = 0; i < size / 2; i++) {		// Populate right list
+    	for(int i = 0; i < size / 2; i++) {		// Populate left list
+    		left.add(list.removeFirst());
+    	}
+        while(!list.isEmpty()) {
         	right.add(list.removeFirst());
         }
-//        System.out.println("Right: " + right + "\n");
         
         // Recursively sort left and right lists
         mergesort(left, c);
         mergesort(right, c);
-//        System.out.println("Left: " + left);
-//        System.out.println("Right: " + right);
-        
+
         // Reassemble the final list
-        while(!left.isEmpty() && !right.isEmpty()) {
-            if(c.compare(left.first(), right.first()) < 0) {
-                list.add(left.removeFirst());
-                list.add(right.removeFirst());
-            } else {
-                list.add(right.removeFirst());
-                list.add(left.removeFirst());
-            }
-        }	
-//        System.out.print("Reassembled List: " + list + "\n\n");	
-	}
+    	while(!left.isEmpty() && !right.isEmpty()) {
+    		if(c.compare(left.first(), right.first()) < 0) {
+    			list.add(left.removeFirst());
+    		} else {
+    			list.add(right.removeFirst());
+    		}
+    	}
+    	
+    	while(!left.isEmpty()) {
+    		list.add(left.removeFirst());
+    	}
+    	while(!right.isEmpty()) {
+    		list.add(right.removeFirst());
+    	}	
+    }
 }
