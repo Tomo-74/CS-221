@@ -18,7 +18,7 @@ public class Sort
 	 */
 	private static <T> IndexedUnsortedList<T> newList() 
 	{
-		return new WrappedDLL<T>(); //TODO: replace with your IUDoubleLinkedList for extra-credit
+		return new IUDoubleLinkedList<T>();
 	}
 	
 	/**
@@ -69,17 +69,17 @@ public class Sort
 	private static <T extends Comparable<T>> void mergesort(IndexedUnsortedList<T> list) {
 		int size = list.size();
         
-        if(size <= 1) {	// Base case
+        if(size <= 1) {	// Base case: single-element lists
             return;
         }
 
         IndexedUnsortedList<T> left = newList();
         IndexedUnsortedList<T> right = newList();
         
-    	for(int i = 0; i < size / 2; i++) {		// Populate left list
+    	for(int i = 0; i < size / 2; i++) {		// Populate left-half list
     		left.add(list.removeFirst());
     	}
-        while(!list.isEmpty()) {
+        while(!list.isEmpty()) {	// Populate right-half list
         	right.add(list.removeFirst());
         }
         
@@ -88,7 +88,7 @@ public class Sort
         mergesort(right);
 
         // Reassemble the final list
-    	while(!left.isEmpty() && !right.isEmpty()) {
+    	while(!left.isEmpty() && !right.isEmpty()) {	// Until one of the half lists is empty
     		if(left.first().compareTo(right.first()) < 0) {
     			list.add(left.removeFirst());
     		} else {
@@ -96,6 +96,7 @@ public class Sort
     		}
     	}
     	
+    	// Add the remaining elements from the non-empty list
     	while(!left.isEmpty()) {
     		list.add(left.removeFirst());
     	}
