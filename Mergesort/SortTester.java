@@ -7,7 +7,6 @@ import java.util.Random;
  * Test Sort class using IUDoubleLinkedList class.
  * @author CS221
  */
-@SuppressWarnings("removal")
 public class SortTester {
 	// initialized in constructor
 	private final boolean PRINT_ALL_TESTS;
