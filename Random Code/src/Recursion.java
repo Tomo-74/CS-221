@@ -22,6 +22,7 @@ public class Recursion {
 		return reverseStr;
 	}
 	
+	/*
 	private static <T extends Comparable<T>> void quickSort(IndexedUnsortedList<T> list) {
 		// Base case
 		if(list.size() <= 1) {
@@ -87,6 +88,7 @@ public class Recursion {
 		list.add(pivot);
 		while(!right.isEmpty()) {
 			list.add(right.removeFirst());
-		}		
+		}	
 	}
+	*/
 }
