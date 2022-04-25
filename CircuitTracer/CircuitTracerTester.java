@@ -385,10 +385,10 @@ public class CircuitTracerTester {
 		} catch (InvalidFileFormatException e) {
 			System.out.println(e.toString());
 			result = Result.InvalidFileFormat;
-		} /*catch (FileNotFoundException e) {	// XXX Weird error here
+		} catch (FileNotFoundException e) {	
 			System.out.println(e.toString());
 			result = Result.FileNotFound;
-		} */catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace(System.out);
 			result = Result.UnexpectedException;
 		}
