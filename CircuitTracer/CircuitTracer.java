@@ -1,4 +1,5 @@
 import java.awt.Point;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -16,6 +17,7 @@ public class CircuitTracer {
 	 *  first arg: -s for stack or -q for queue
 	 *  second arg: -c for console output or -g for GUI output
 	 *  third arg: input file name 
+	 * @throws FileNotFoundException 
 	 */
 	public static void main(String[] args) {
 		new CircuitTracer(args); //create this with args
@@ -33,6 +35,7 @@ public class CircuitTracer {
 	 * line arguments.
 	 * 
 	 * @param args command line arguments passed through from main()
+	 * @throws FileNotFoundException 
 	 */
 	public CircuitTracer(String[] args) {
 		//TODO: parse and validate command line args - first validation provided
@@ -42,6 +45,7 @@ public class CircuitTracer {
 		}
 		//TODO: initialize the Storage to use either a stack or queue
 		//TODO: read in the CircuitBoard from the given file
+		CircuitBoard board = new CircuitBoard(args[0]);
 		//TODO: run the search for best paths
 		//TODO: output results to console or GUI, according to specified choice
 	}

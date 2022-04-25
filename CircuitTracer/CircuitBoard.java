@@ -14,21 +14,23 @@ import java.util.regex.Pattern;
 public class CircuitBoard {
 	/** current contents of the board */
 	private char[][] board;
-	/** location of row,col for '1' */
+	/** location of row, col for '1' */
 	private Point startingPoint;
-	/** location of row,col for '2' */
+	/** location of row, col for '2' */
 	private Point endingPoint;
 
-	//constants you may find useful
-	private final int ROWS; //initialized in constructor
-	private final int COLS; //initialized in constructor
+	// Instance variables for format checking
+	private int expectedRows, expectedCols;		// The expected number of rows and columns, as specified by the input file's first line
+	private int rows, cols;		// The actual number of rows and columns, as determined by looping through the file
+	private final String ALLOWED_CHARS = "OXT12";
+	
+	// Other instance variables
 	private final char OPEN = 'O'; //capital 'o'
 	private final char CLOSED = 'X';
 	private final char TRACE = 'T';
 	private final char START = '1';
 	private final char END = '2';
-	private final String ALLOWED_CHARS = "OXT12";
-
+	
 	/** Construct a CircuitBoard from a given board input file, where the first
 	 * line contains the number of rows and columns as ints and each subsequent
 	 * line is one row of characters representing the contents of that position.
@@ -40,24 +42,105 @@ public class CircuitBoard {
 	 *  'T' is not expected in input files - represents part of the trace
 	 *   connecting components 1 and 2 in the solution
 	 * 
-	 * @param filename
-	 * 		file containing a grid of characters
+	 * @param fileName file containing a grid of characters
 	 * @throws FileNotFoundException if Scanner cannot read the file
 	 * @throws InvalidFileFormatException for any other format or content issue that prevents reading a valid input file
 	 */
-	public CircuitBoard(String filename) throws FileNotFoundException {
-		Scanner fileScan = new Scanner(new File(filename));
-		
-		//TODO: parse the given file to populate the char[][]
-		// throw FileNotFoundException if Scanner cannot read the file
-		// throw InvalidFileFormatException if any formatting or parsing issues are encountered
-		
-		ROWS = 0; //replace with initialization statements using values from file
-		COLS = 0;
-		
-		fileScan.close();
+	public CircuitBoard(String fileName) {
+		rows = cols = expectedRows = expectedCols = 0;		// Initialize instance variables
+		checkFileFormat(fileName);
+		populateBoard(board, fileName);
 	}
 	
+	private void checkFileFormat(String fileName) {
+		// Ensures the input file is properly formatted
+		// Throws FileNotFoundException if Scanner cannot read the file
+		// Throws InvalidFileFormatException if any formatting or parsing issues are encountered
+		
+		try {
+			System.out.println();	// Print a blank line before each file (for output readability)
+			System.out.println(fileName);
+			
+			Scanner fileScan  = new Scanner(new File(fileName));	// Scan the current file (each row is a token). Throws FileNotFoundException if the file path is invalid
+			String fileFormatLine = fileScan.nextLine();	// Get the first line of the file, which specifies the number of rows and columns
+			
+			Pattern pattern = Pattern.compile("^([0-9])(\\s++)([0-9])$");	// Regular expression (regex): (one digit)(at least one whitespace character)(one digit)
+																			// The first line must contain these and only these values to be considered properly formatted
+			Matcher matcher = pattern.matcher(fileFormatLine);	// Create a Matcher object and search the first line for the regex
+			boolean hasValidFirstLine = matcher.find();	// Evaluates to true if the first line contains the regex
+			
+			if(!hasValidFirstLine) {	// If the first line does not contain the regex, throw an InvalidFirstLineException
+				throw new InvalidFileFormatException("First line of file does not contain two white-space-separated positive integers");						
+			}
+			
+			// If we get to this point, we know the first line is valid. Therefore, we can parse the number of rows and columns from Strings to ints
+			expectedRows = Integer.parseInt(matcher.group(1));	// The regex's first group contains the first digit, representing the number of rows in the file
+			expectedCols = Integer.parseInt(matcher.group(3));	// The regex's third group contains the second digit, representing the number of columns in the file
+			
+			while (fileScan.hasNextLine()) {	// While the file has more rows...
+				String row = fileScan.nextLine();	// Get the current row. Move the Scanner forward to the next row
+				if(!row.trim().isEmpty()) {	// If the row is not blank...
+					rows++;	// Increment the actual number of rows
+					Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens. This is for counting the number of columns in each row
+					while (rowScan.hasNext()) {	// While there are still columns in the row...						
+						String curVal = rowScan.next();	// Get the value in current column. Move the Scanner forward to the next column
+						cols++;	// Increment the actual number of columns
+						
+						if(!ALLOWED_CHARS.contains(curVal)) {	// If the current element is an invalid value, throw an InvalidFileFormatException
+							rowScan.close();
+							throw new InvalidFileFormatException("In file body: expected one of \"OXT12\", but received \"" + curVal + "\"");
+						}
+					}
+					if(expectedCols != cols) {	// Check that the file actually has the number of columns specified by the first line
+						rowScan.close();
+						throw new InvalidFileFormatException("Expected " + expectedCols + " columns, but file contained " + cols);
+					}
+					cols = 0;	// Reset the column counter before Scanning the next row
+					rowScan.close();
+				}	
+			}
+			if(expectedRows != rows) {	// Check that the file actually has the number of rows specified by the first line
+				throw new InvalidFileFormatException("Expected " + expectedRows + " rows, but file contained " + rows);
+			}
+			
+			System.out.println(expectedRows + " " + expectedCols);
+
+		} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot read the file
+			System.out.println(e.toString());
+		} catch(InvalidFileFormatException e) {	// Thrown if the file is improperly formatted
+			System.out.println(e.toString());
+		} catch(Exception e) {	// Catch-all for unexpected Exceptions
+			System.out.println(e.toString());
+		}
+	}
+	
+	/**
+	 * Populates board with values from input text file.
+	 * @param board a 2D char array representing the circuit board
+	 * @param fileName the name of the input file
+	 */
+	private void populateBoard(char[][] board, String fileName) {
+		// Parse the given file to populate the char[][] board
+		try {
+			Scanner fileScan = new Scanner(new File(fileName));
+			fileScan.nextLine();	// Bypass the initial line that designated rows and cols
+			
+			for(int i = 0; i < rows; i++) {	// Populate the board with the values from the text file		
+				String line = fileScan.nextLine();
+				Scanner lineScan = new Scanner(line);
+				for(int j = 0; j < cols; j++) {
+					board[i][j] = line.charAt(j);	// or lineScan.next().toCharArray()[0]
+				}
+				lineScan.close();
+			}
+			fileScan.close();
+		} catch(FileNotFoundException e) {
+			System.out.println(e.toString());
+		} catch(Exception e) {
+			System.out.println(e.toString());
+		}
+	}
+
 	/** Copy constructor - duplicates original board
 	 * 
 	 * @param original board to copy
@@ -66,10 +149,11 @@ public class CircuitBoard {
 		board = original.getBoard();
 		startingPoint = new Point(original.startingPoint);
 		endingPoint = new Point(original.endingPoint);
-		ROWS = original.numRows();
-		COLS = original.numCols();
+		rows = original.numRows();
+		cols = original.numCols();
 	}
 
+	
 	/** utility method for copy constructor
 	 * @return copy of board array */
 	private char[][] getBoard() {
@@ -128,12 +212,12 @@ public class CircuitBoard {
 	
 	/** @return number of rows in this CircuitBoard */
 	public int numRows() {
-		return ROWS;
+		return rows;
 	}
 	
 	/** @return number of columns in this CircuitBoard */
 	public int numCols() {
-		return COLS;
+		return cols;
 	}
 
 	/* (non-Javadoc)
@@ -151,110 +235,3 @@ public class CircuitBoard {
 	}
 	
 }// class CircuitBoard
-
-
-/*
- In constructor:
- 		expectedRows = expectedCols = actualRows = actualCols = 0;
-		fileName = "";
-		
- In main method:
-	try { 
-		if(file.length == 0) {	// Check if an input file is provided.
-			throw new FileNotFoundException("Input file(s) not provided.");
-		}
-		try {
-			System.out.println();	// Print a blank line before each file (for output readability)
-			fileName = file[0];	// Find and print the current file's name
-			System.out.println(fileName);
-			
-			Scanner fileScan  = new Scanner(new FileReader(files[index]));	// Scan the current file (each row is a token). Throws FileNotFoundException if the file path is invalid
-			String fileFormatLine = fileScan.nextLine();	// Get the first line of the file, which specifies the number of rows and columns
-			
-			Pattern pattern = Pattern.compile("^([0-9])(\\s++)([0-9])$");	// Regular expression (regex): (one digit)(at least one whitespace character)(one digit)
-																			// The first line must contain these and only these values to be considered properly formatted
-			Matcher matcher = pattern.matcher(fileFormatLine);	// Create a Matcher object and search the first line for the regex
-			boolean hasValidFirstLine = matcher.find();	// Evaluates to true if the first line contains the regex
-			
-			if(!hasValidFirstLine) {	// If the first line does not contain the regex, throw an InvalidFirstLineException
-				throw new InvalidFileFormatException("First line of file does not contain two white-space-separated positive integers");						
-			}
-			
-			// If we get to this point, we know the first line is valid. Therefore, we can parse the number of rows and columns from Strings to ints
-			expectedRows = Integer.parseInt(matcher.group(1));	// The regex's first group contains the first digit, representing the number of rows in the file
-			expectedCols = Integer.parseInt(matcher.group(3));	// The regex's third group contains the second digit, representing the number of columns in the file
-			
-			while (fileScan.hasNextLine()) {	// While the file has more rows...
-				String row = fileScan.nextLine();	// Get the current row. Move the Scanner forward to the next row
-				if(!row.trim().isEmpty()) {	// If the row is not blank...
-					actualRows++;	// Increment the actual number of rows
-					Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens. This is for counting the number of columns in each row
-					while (rowScan.hasNext()) {	// While there are still elements in the row...						
-						String curVal = rowScan.next();	// Get the value in current column. Move the Scanner forward to the next column
-						actualCols++;	// Increment the actual number of columns
-						
-						if(curVal != "O" || curVal != "X" || curVal != "1" || curVal != "2" || curVal != "T") {	// If the current element isn't an acceptable value, throw a InvalidFileFormatException
-							rowScan.close();
-							throw new InvalidFileFormatException("In file body: expected 'O' 'X' '1' '2' or 'T', but received \"" + curValue + "\"");
-						}
-					}
-					rowScan.close();
-				}	
-			}
-			System.out.println(expectedRows + " " + expectedCols);
-			
-			while (fileScan.hasNextLine()) {	// While the file has more rows...
-				String row = fileScan.nextLine();	// Get the current row. Move the Scanner forward to the next row
-				if(!row.trim().isEmpty()) {	// If the row is not blank...
-					actualRows++;	// Increment the actual number of rows
-					Scanner rowScan = new Scanner(row); // Scanner to break current row into tokens. This is for counting the number of columns in each row
-					while (rowScan.hasNext()) {	// While there are still columns in the row...						
-						String curValue = rowScan.next();	// Get the value in current column. Move the Scanner forward to the next column
-						actualCols++;	// Increment the actual number of columns
-						boolean isAlphabetic = curValue.matches("[a-zA-Z]+");	// Check if the value in the current column is alphabetic 
-						
-						if(isAlphabetic) {	// If the value in the current column is alphabetic, throw a DataTypeException
-							rowScan.close();
-							throw new DataTypeException("In file body: expected numeric value, but received \"" + curValue + "\"");
-						}
-					}
-					if(expectedCols != actualCols) {	// Check that the file actually has the number of columns specified by the first line
-						throw new ColumnMismatchException("Expected " + expectedCols + " columns, but file contained " + actualCols);
-					}
-					actualCols = 0;	// Reset the column counter before Scanning the next row
-					rowScan.close();
-				}	
-			}
-			if(expectedRows != actualRows) {	// Check that the file actually has the number of rows specified by the first line
-				throw new RowMismatchException("Expected " + expectedRows + " rows, but file contained " + actualRows);
-			}
-			System.out.println(expectedRows + " " + expectedCols);
-			System.out.println("VALID");	// If no Exception gets thrown during the above tests, then the file is valid (has good format and data)
-		} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot access the file (invalid file path)
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} catch(FirstLineException e) {	// Thrown if the first line does not contain two white-space-separated, positive integers
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} catch(DataTypeException e) {	// Thrown when a scanner encounters non-numeric data
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} catch(ColumnMismatchException e) {	// Thrown if the specified number of columns does not match the actual number of columns
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} catch(RowMismatchException e) {	// Thrown when the specified number of rows does not match the actual number of rows
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} catch(Exception e) {	// Catch-all for unexpected Exceptions
-			System.out.println(e.toString());
-			System.out.println("INVALID");
-		} finally {	// Reset counter variables after reading through each file 
-			actualRows = 0;
-			actualCols = 0;	// actualCols is reset to 0 on line 96. But if an Exception is thrown during the while loop before line 96,
-							// actualCols must be reset in this finally block
-		}
-	} catch(FileNotFoundException e) {	// Thrown if at least one file is not provided through command line
-		System.out.println(e.toString());
-		System.out.println("INVALID");
-	}
-*/
