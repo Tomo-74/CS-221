@@ -45,7 +45,11 @@ public class CircuitTracer {
 		}
 		//TODO: initialize the Storage to use either a stack or queue
 		//TODO: read in the CircuitBoard from the given file
-		CircuitBoard board = new CircuitBoard(args[0]);
+		try {
+			CircuitBoard board = new CircuitBoard(args[0]);
+		} catch (FileNotFoundException e) {
+			System.out.println(e.toString());
+		}
 		//TODO: run the search for best paths
 		//TODO: output results to console or GUI, according to specified choice
 	}

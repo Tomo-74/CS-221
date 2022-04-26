@@ -46,13 +46,13 @@ public class CircuitBoard {
 	 * @throws FileNotFoundException if Scanner cannot read the file
 	 * @throws InvalidFileFormatException for any other format or content issue that prevents reading a valid input file
 	 */
-	public CircuitBoard(String fileName) {
+	public CircuitBoard(String fileName) throws FileNotFoundException {
 		rows = cols = expectedRows = expectedCols = 0;		// Initialize instance variables
 		checkFileFormat(fileName);
 		populateBoard(board, fileName);
 	}
 	
-	private void checkFileFormat(String fileName) {
+	private void checkFileFormat(String fileName) throws FileNotFoundException {
 		// Ensures the input file is properly formatted
 		// Throws FileNotFoundException if Scanner cannot read the file
 		// Throws InvalidFileFormatException if any formatting or parsing issues are encountered
@@ -105,13 +105,9 @@ public class CircuitBoard {
 			
 			System.out.println(expectedRows + " " + expectedCols);
 
-		} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot read the file
-			System.out.println(e.toString());
 		} catch(InvalidFileFormatException e) {	// Thrown if the file is improperly formatted
 			System.out.println(e.toString());
-		} catch(Exception e) {	// Catch-all for unexpected Exceptions
-			System.out.println(e.toString());
-		}
+		} 
 	}
 	
 	/**
