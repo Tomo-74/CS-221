@@ -1,0 +1,2 @@
+Usage: java CircuitTracer <-s | -q> <-c | -g> input_file
+

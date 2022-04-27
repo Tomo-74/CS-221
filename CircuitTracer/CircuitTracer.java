@@ -45,7 +45,7 @@ public class CircuitTracer {
 		} else if(args[0] != "-s" || args[0] != "-q") {
 			printUsage();
 			return;
-		} else if(args[1] != "-c" || args[0] != "-g") {
+		} else if(args[1] != "-c" || args[1] != "-g") {
 			printUsage();
 			return;
 		}
@@ -59,8 +59,10 @@ public class CircuitTracer {
 		
 		// Read in the CircuitBoard from the given file
 		try {
-			CircuitBoard board = new CircuitBoard(args[0]);
+			CircuitBoard board = new CircuitBoard(args[2]);
 		} catch (FileNotFoundException e) {
+			System.out.println(e.toString());
+		} catch (InvalidFileFormatException e) {
 			System.out.println(e.toString());
 		} catch (Exception e) {
 			System.out.println(e.toString());

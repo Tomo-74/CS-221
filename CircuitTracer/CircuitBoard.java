@@ -24,12 +24,16 @@ public class CircuitBoard {
 	private int rows, cols;		// The actual number of rows and columns, as determined by looping through the file
 	private final String ALLOWED_CHARS = "OXT12";
 	
-	// Other instance variables
+	// FINAL instance variables
 	private final char OPEN = 'O'; //capital 'o'
 	private final char CLOSED = 'X';
 	private final char TRACE = 'T';
 	private final char START = '1';
 	private final char END = '2';
+	
+	// Counter variables to ensure valid number of 1s and 2s on board
+	private int numOnes;
+	private int numTwos;
 	
 	/** Construct a CircuitBoard from a given board input file, where the first
 	 * line contains the number of rows and columns as ints and each subsequent
@@ -46,40 +50,17 @@ public class CircuitBoard {
 	 * @throws FileNotFoundException if Scanner cannot read the file
 	 * @throws InvalidFileFormatException for any other format or content issue that prevents reading a valid input file
 	 */
-	public CircuitBoard(String fileName) throws FileNotFoundException {
-		rows = cols = expectedRows = expectedCols = 0;		// Initialize instance variables
-		checkFileFormat(fileName);
-		populateBoard(board, fileName);
-		System.out.println(board.toString());
-//		printBoard(board);
-	}
-	
-	/** Copy constructor - duplicates original board
-	 * 
-	 * @param original board to copy
-	 */
-	public CircuitBoard(CircuitBoard original) {
-		board = original.getBoard();
-		startingPoint = new Point(original.startingPoint);
-		endingPoint = new Point(original.endingPoint);
-		rows = original.numRows();
-		cols = original.numCols();
-	}
-	
-	/** Utility method that ensures the input file is properly formatted. This means
-	 * that the first line of the file contains two white-space-separated positive
-	 * integers designating the number of rows and columns to follow. And the rest
-	 * of the file only contains the following characters: O, X, T, 1, or 2.
-	 * 
-	 * @param fileName file containing a grid of characters
-	 * @throws FileNotFoundException if Scanner cannot read the file
-	 * @throws InvalidFileFormatException for any other format or content issue that prevents reading a valid input file
-	 */
-	private void checkFileFormat(String fileName) throws FileNotFoundException {
-		try {
+	public CircuitBoard(String fileName) throws FileNotFoundException, InvalidFileFormatException {
+		
+		// Initialize instance variables
+		rows = cols = 0;
+		expectedRows = expectedCols = 0;		
+		numOnes = numTwos = 0;
+		
+		/////////////////////////////////
+		// Check for valid file format //
+		/////////////////////////////////
 			System.out.println();	// Print a blank line before each file (for output readability)
-//			System.out.println(fileName);
-			
 			Scanner fileScan  = new Scanner(new File(fileName));	// Scan the current file (each row is a token). Throws FileNotFoundException if the file path is invalid
 			String formatLine = fileScan.nextLine();	// Get the first line of the file, which specifies the number of rows and columns
 			
@@ -106,11 +87,25 @@ public class CircuitBoard {
 					while (rowScan.hasNext()) {	// While there are still columns in the row...						
 						String curElement = rowScan.next();	// Get the value in current column. Move the Scanner forward to the next column
 						cols++;	// Increment the actual number of columns
+//						System.out.println("Current element: " + curElement + " " + curElement.getClass().getName());
 						
-						if(!ALLOWED_CHARS.contains(curElement)) {	// If the current element is an invalid value, throw an InvalidFileFormatException
+						if(!ALLOWED_CHARS.contains(curElement)) {	// If the current element is not a O, X, T, 1, or 2, throw an InvalidFileFormatException
 							rowScan.close();
 							throw new InvalidFileFormatException("In file body: expected only 'O' 'X' 'T' '1' '2', but received '" + curElement + "'");
+						} else if(curElement.equals("1")) {
+							numOnes++;
+							if(numOnes > 1) {
+								rowScan.close();
+								throw new InvalidFileFormatException("More than one starting point ('1') in input file.");
+							}
+						} else if(curElement.equals("2")) {
+							numTwos++;
+							if(numTwos > 1) {
+								rowScan.close();
+								throw new InvalidFileFormatException("More than one starting point ('2') in input file.");
+							}
 						}
+						
 					}
 					if(expectedCols != cols) {	// Check that the file actually has the number of columns specified by the first line
 						rowScan.close();
@@ -133,36 +128,37 @@ public class CircuitBoard {
 			cols = temp;	
 			
 //			System.out.println(expectedRows + " " + expectedCols);
-			System.out.println(rows + " " + cols);
-
-		} catch(InvalidFileFormatException e) {	// Thrown if the file is improperly formatted
-			System.out.println(e.toString());
-		} 
+//			System.out.println(rows + " " + cols);
+		
+		////////////////////
+		// Populate board //
+		////////////////////  
+		Scanner rowScan = new Scanner(new File(fileName));	// Scan file to get contents
+		rowScan.nextLine();	// Pass the first line
+		
+		board = new char[rows][cols];
+		
+		for(int i = 0; i < rows; i++) {	// Populate the board with the values from the input file		
+			String line = rowScan.nextLine();
+			Scanner lineScan = new Scanner(line);
+			for(int j = 0; j < cols; j++) {
+				board[i][j] = lineScan.next().charAt(0);
+			}
+			lineScan.close();
+		}
+		rowScan.close();
 	}
 	
-	/** Populates board with values from input text file. This method should
-	 * only be run once the file has been checked for proper formatting.
+	/** Copy constructor - duplicates original board
 	 * 
-	 * @param board a 2D char array representing the circuit board
-	 * @param fileName the name of the input file
-	 * @throws FileNotFoundException if Scanner cannot read the file
+	 * @param original board to copy
 	 */
-	private void populateBoard(char[][] board, String fileName) throws FileNotFoundException {
-		// Parse the given file to populate the char[][] board
-			Scanner fileScan = new Scanner(new File(fileName));
-			fileScan.nextLine();	// Bypass the file's first line, which contains formatting information
-			
-			board = new char[rows][cols];
-			
-			for(int i = 0; i < rows; i++) {	// Populate the board with the values from the text file		
-				String line = fileScan.nextLine();
-				Scanner lineScan = new Scanner(line);
-				for(int j = 0; j < cols; j++) {
-					board[i][j] = lineScan.next().charAt(0);
-				}
-				lineScan.close();
-			}
-			fileScan.close();
+	public CircuitBoard(CircuitBoard original) {
+		board = original.getBoard();
+		startingPoint = new Point(original.startingPoint);
+		endingPoint = new Point(original.endingPoint);
+		rows = original.numRows();
+		cols = original.numCols();
 	}
 
 	/**
@@ -260,4 +256,7 @@ public class CircuitBoard {
 		return str.toString();
 	}
 	
+	public static void main(String[] args) throws FileNotFoundException, InvalidFileFormatException {
+		CircuitBoard myBoard = new CircuitBoard("C:\\Users\\tomol\\git\\EclipseProjects\\CircuitTracer\\invalid1.dat");
+	}
 }// class CircuitBoard
