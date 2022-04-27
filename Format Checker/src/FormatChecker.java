@@ -93,6 +93,10 @@ public class FormatChecker {
 							if(expectedCols != actualCols) {	// Check that the file actually has the number of columns specified by the first line
 								throw new ColumnMismatchException("Expected " + expectedCols + " columns, but file contained " + actualCols);
 							}
+							
+							/**
+							 * Known bug: in the final while loop iteration, actualCols will be set to 0 and will retain this value for the rest of the program
+							 */
 							actualCols = 0;	// Reset the column counter before Scanning the next row
 							rowScan.close();
 						}	
@@ -101,6 +105,8 @@ public class FormatChecker {
 						throw new RowMismatchException("Expected " + expectedRows + " rows, but file contained " + actualRows);
 					}
 					System.out.println(expectedRows + " " + expectedCols);
+//					System.out.println(actualRows + " " + actualCols);
+					
 					System.out.println("VALID");	// If no Exception gets thrown during the above tests, then the file is valid (has good format and data)
 				} catch(FileNotFoundException e) {	// Thrown if the Scanner cannot access the file (invalid file path)
 					System.out.println(e.toString());

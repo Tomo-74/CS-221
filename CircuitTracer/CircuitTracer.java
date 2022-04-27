@@ -1,6 +1,8 @@
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Search for shortest paths between start and end points on a circuit board
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  * @author mvail
  */
 public class CircuitTracer {
-
+	
 	/** launch the program
 	 * @param args three required arguments:
 	 *  first arg: -s for stack or -q for queue
@@ -25,9 +27,7 @@ public class CircuitTracer {
 
 	/** Print instructions for running CircuitTracer from the command line. */
 	private void printUsage() {
-		//TODO: print out clear usage instructions when there are problems with
-		// any command line args
-		// See https://en.wikipedia.org/wiki/Usage_message for format and content guidance
+		System.out.println("Usage: java CircuitTracer <-s | -q> <-c | -g> input_file\n");
 	}
 	
 	/** 
@@ -38,19 +38,36 @@ public class CircuitTracer {
 	 * @throws FileNotFoundException 
 	 */
 	public CircuitTracer(String[] args) {
-		//TODO: parse and validate command line args - first validation provided
+		// Validate command line arguments:
 		if (args.length != 3) {
 			printUsage();
-			return; //exit the constructor immediately
+			return; // Exits the constructor immediately
+		} else if(args[0] != "-s" || args[0] != "-q") {
+			printUsage();
+			return;
+		} else if(args[1] != "-c" || args[0] != "-g") {
+			printUsage();
+			return;
 		}
-		//TODO: initialize the Storage to use either a stack or queue
-		//TODO: read in the CircuitBoard from the given file
+		
+		// Initialize the Storage to use either a stack or queue
+		if(args[0] == "-s") {
+			Storage<Stack> stateStore = new Storage<>(Storage.DataStructure.stack);
+		} else {
+			Storage<Queue> stateStore = new Storage<>(Storage.DataStructure.queue);
+		}
+		
+		// Read in the CircuitBoard from the given file
 		try {
 			CircuitBoard board = new CircuitBoard(args[0]);
 		} catch (FileNotFoundException e) {
 			System.out.println(e.toString());
+		} catch (Exception e) {
+			System.out.println(e.toString());
 		}
+		
 		//TODO: run the search for best paths
+		
 		//TODO: output results to console or GUI, according to specified choice
 	}
 	
