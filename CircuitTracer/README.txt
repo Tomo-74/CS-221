@@ -1,7 +1,7 @@
 ********************
 * Circuit Tracer
 * CS 221
-* 4/24/2022
+* 4/26/2022
 * Thomas Lonowski
 ******************** 
 
@@ -168,6 +168,11 @@ TESTING:
  requirements? What was the testing strategy? What kinds of tests were run?
  Can your program handle bad input? Is your program  idiot-proof? How do you 
  know? What are the known issues / bugs remaining in your program?
+ 
+ During development, I made a main method in the CircuitBoard class itself to
+ debug my exception handling code and better identify where invalid files
+ weren't being caught. This allowed me to fine tune my program to catch all
+ invalid file types.
 
 
 DISCUSSION:
@@ -176,6 +181,20 @@ DISCUSSION:
  and testing. What problems did you have? What did you have to research
  and learn on your own? What kinds of errors did you get? How did you 
  fix them?
+ 
+ 
+ One problem I had during the early stages of development was identifying
+ where the try/catch blocks and throws statements should go. It was a bit
+ confusing because we had to work with three classes: CircuitBoard,
+ CircuitTracer, and CircuitTracerTester. Eventually I was able to figure
+ that all Exceptions should be thrown from CircuitBoard to the driver class,
+ CircuitTracer, where they would be caught with a try/catch block.
+ 
+ I had to look through the testCircuitTracerInvalidFile() method in CircuitTracerTester to
+ figure out how it was determining whether an exception was being thrown or not. I found out
+ that the test it just looked for console output containing the name of the expected exception.
+ This helped me understand what my exception handling code was expected to do.
+ 
  
  What parts of the project did you find challenging? Is there anything
  that finally "clicked" for you in the process of working on this project?
