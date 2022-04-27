@@ -105,9 +105,10 @@ public class CircuitBoard {
 								throw new InvalidFileFormatException("More than one starting point ('2') in input file.");
 							}
 						}
-						
 					}
-					if(expectedCols != cols) {	// Check that the file actually has the number of columns specified by the first line
+					
+					/* Check that the file has the specified number of columns */
+					if(expectedCols != cols) {	
 						rowScan.close();
 						throw new InvalidFileFormatException("Expected " + expectedCols + " columns, but file contained " + cols);
 					}
@@ -116,7 +117,17 @@ public class CircuitBoard {
 					rowScan.close();
 				}	
 			}
-			if(expectedRows != rows) {	// Check that the file actually has the number of rows specified by the first line
+			
+			/* Check that the file contains only one '1' and '2' */
+			if(numOnes == 0) {
+				throw new InvalidFileFormatException("Input file does not contain a starting point ('1').");
+			}
+			if(numTwos == 0) {
+				throw new InvalidFileFormatException("Input file does not contain an ending point ('2').");
+			}
+
+			/* Check that the file has the specified number of rows */
+			if(expectedRows != rows) {
 				throw new InvalidFileFormatException("Expected " + expectedRows + " rows, but file contained " + rows);
 			}
 			
