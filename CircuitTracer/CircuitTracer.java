@@ -20,15 +20,9 @@ public class CircuitTracer {
 	private CircuitBoard board;
 	private Storage<TraceState> stateStore;
 	
-	// Point objects holding the coordinates of the starting and ending points
-	private Point startingPoint;
-	private Point endingPoint;
-	
 	// Individual X and Y coordinates of the starting and ending points
 	private int startingPointX;
 	private int startingPointY;
-	private int endingPointX;
-	private int endingPointY;
 	
 	/** launch the program
 	 * @param args three required arguments:
@@ -79,18 +73,10 @@ public class CircuitTracer {
 				stateStore = new Storage<>(Storage.DataStructure.queue);
 			}
 			
-			List<TraceState> bestPaths = new LinkedList<>();	// Single linked list because it is efficient adding to rear and removing from front
+			List<TraceState> bestPaths = new ArrayList<>();	// Single linked list because it is efficient adding to rear and removing from front
 			
-			startingPoint = board.getStartingPoint();
-			endingPoint = board.getEndingPoint();
-			
-			startingPointX = (int) startingPoint.getX() - 1;	// Subtract 1 because the Point class starts at index 1
-			startingPointY = (int) startingPoint.getY() - 1;
-			endingPointX = (int) endingPoint.getX() - 1;
-			endingPointY = (int) endingPoint.getY() - 1;
-			
-//			System.out.println(startingPointX);
-//			System.out.println(startingPointY);
+			startingPointX = (int) board.getStartingPoint().getX() - 1;	// Subtract 1 because the Point class starts at index 1
+			startingPointY = (int) board.getStartingPoint().getY() - 1;
 			
 			/* Make all possible moves from the starting position using the order: right, down, left, up.
 			 * Store these initial moves in stateStore */
@@ -106,18 +92,50 @@ public class CircuitTracer {
 			if(board.isOpen(startingPointX - 1, startingPointY)) {
 				stateStore.store(new TraceState(board, startingPointX - 1, startingPointY));
 			}
-			System.out.println("stateStore size: " + stateStore.size() + " \n");
-			System.out.println(stateStore.retrieve());
-			System.out.println(stateStore.retrieve());
-
+			
+//			System.out.println("stateStore size: " + stateStore.size() + " \n");
+//			System.out.println(stateStore.retrieve());
+//			System.out.println(stateStore.retrieve());
+			
+			while(!stateStore.isEmpty()) {
+				TraceState currentTrace = stateStore.retrieve();
+				if(currentTrace.isComplete()) {
+					if(bestPaths.isEmpty() || currentTrace.pathLength() == bestPaths.get(0).pathLength()) {
+						bestPaths.add(currentTrace);
+					} else if(currentTrace.pathLength() < bestPaths.get(0).pathLength()) {
+						bestPaths.clear();
+						bestPaths.add(currentTrace);
+					} 
+				} else {
+					if(board.isOpen(currentTrace.getRow(), currentTrace.getCol() + 1)) {
+						stateStore.store(new TraceState(currentTrace, currentTrace.getRow(), currentTrace.getCol() + 1));
+						System.out.println("A: ");
+					}
+					if(board.isOpen(currentTrace.getRow() + 1, currentTrace.getCol())) {
+						stateStore.store(new TraceState(currentTrace, currentTrace.getRow() + 1, currentTrace.getCol()));
+						System.out.println("B: ");
+					}
+					if(board.isOpen(currentTrace.getRow(), currentTrace.getCol() - 1)) {
+						stateStore.store(new TraceState(currentTrace, currentTrace.getRow(), currentTrace.getCol() - 1));
+						System.out.println("C: ");
+					}
+					// for some reason this if statement evaluates to true when position contains a T
+					System.out.println(board.isOpen(currentTrace.getRow() - 1, currentTrace.getCol()));
+					if(board.isOpen(currentTrace.getRow() - 1, currentTrace.getCol())) {
+						stateStore.store(new TraceState(currentTrace, currentTrace.getRow() - 1, currentTrace.getCol()));
+						System.out.println("D: ");
+					}
+				}
+			}
+			
 		} catch (FileNotFoundException e) {
 			System.out.println(e.toString());
 		} catch (InvalidFileFormatException e) {
 			System.out.println(e.toString());
 		} catch (IndexOutOfBoundsException e) {
-			System.out.println("Cannot move off of board.");
+			System.out.println(e.toString());
 		} catch (OccupiedPositionException e) {
-			System.out.println("Position is occupied");
+			System.out.println(e.toString());
 		} catch (NullPointerException e) {
 			System.out.println(e.toString());
 		}

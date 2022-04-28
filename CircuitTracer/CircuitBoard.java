@@ -219,7 +219,7 @@ public class CircuitBoard {
 		if (row < 0 || row >= board.length || col < 0 || col >= board[row].length) {
 			return false;
 		}
-		return board[row][col] == OPEN;
+		return board[row][col] == OPEN;	// currentPosition == 'O'
 	}
 	
 	/** Set given position to be a 'T'
