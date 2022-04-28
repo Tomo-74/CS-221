@@ -195,10 +195,12 @@ DISCUSSION:
  that the test it just looked for console output containing the name of the expected exception.
  This helped me understand what my exception handling code was expected to do.
  
- 
- What parts of the project did you find challenging? Is there anything
- that finally "clicked" for you in the process of working on this project?
- 
+ It took me a while to understand how to instantiate a new Storage object. After
+ reading through the class and its method documentations, I had a much better
+ idea of how it works. Similarly, I looked through the Javadocs 8 to figure out
+ what Point objects were and how I could use the class's methods in my code. Once
+ I understood these things, converting the pseudo code algorithm to Java came
+ to me more easily. 
  
 EXTRA CREDIT:
 

@@ -84,7 +84,7 @@ public class CircuitTracer {
 			startingPoint = board.getStartingPoint();
 			endingPoint = board.getEndingPoint();
 			
-			startingPointX = (int) startingPoint.getX() - 1;	// 1 is subtracted because the Point class starts at index 1
+			startingPointX = (int) startingPoint.getX() - 1;	// Subtract 1 because the Point class starts at index 1
 			startingPointY = (int) startingPoint.getY() - 1;
 			endingPointX = (int) endingPoint.getX() - 1;
 			endingPointY = (int) endingPoint.getY() - 1;
@@ -125,9 +125,8 @@ public class CircuitTracer {
 			System.out.println(e.toString());
 		}
 		
-
-		
 		//TODO: output results to console or GUI, according to specified choice
+		
 	}
 	
 } // class CircuitTracer
