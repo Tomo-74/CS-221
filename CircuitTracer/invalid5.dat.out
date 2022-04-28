@@ -1,2 +1,2 @@
-Usage: java CircuitTracer <-s | -q> <-c | -g> input_file
 
+InvalidFileFormatException: In file body: expected only 'O' 'X' 'T' '1' '2', but received 'N'

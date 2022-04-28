@@ -98,12 +98,14 @@ public class CircuitBoard {
 								rowScan.close();
 								throw new InvalidFileFormatException("More than one starting point ('1') in input file.");
 							}
+							startingPoint = new Point(rows, cols);	// Initialize a Point object with the coordinates where '1' is located on the board
 						} else if(curElement.equals("2")) {
 							numTwos++;
 							if(numTwos > 1) {
 								rowScan.close();
 								throw new InvalidFileFormatException("More than one starting point ('2') in input file.");
 							}
+							endingPoint = new Point(rows, cols);	// Initialize a Point object with the coordinates where '2' is located on the board
 						}
 					}
 					
@@ -265,9 +267,5 @@ public class CircuitBoard {
 			str.append("\n");
 		}
 		return str.toString();
-	}
-	
-	public static void main(String[] args) throws FileNotFoundException, InvalidFileFormatException {
-		CircuitBoard myBoard = new CircuitBoard("C:\\Users\\tomol\\git\\EclipseProjects\\CircuitTracer\\invalid1.dat");
 	}
 }// class CircuitBoard

@@ -1,2 +1,2 @@
-Usage: java CircuitTracer <-s | -q> <-c | -g> input_file
 
+InvalidFileFormatException: Input file does not contain an ending point ('2').

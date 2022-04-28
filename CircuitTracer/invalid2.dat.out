@@ -1,2 +1,2 @@
-Usage: java CircuitTracer <-s | -q> <-c | -g> input_file
 
+InvalidFileFormatException: More than one starting point ('2') in input file.

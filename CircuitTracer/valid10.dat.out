@@ -1,2 +1,11 @@
-Usage: java CircuitTracer <-s | -q> <-c | -g> input_file
+
+stateStore size: 2 
+
+1 T X 
+O X O 
+X O 2 
+
+1 O X 
+T X O 
+X O 2 
 
