@@ -1,2 +1,3 @@
 
 java.io.FileNotFoundException: noSuchFile (The system cannot find the file specified)
+java.lang.NullPointerException: Cannot invoke "CircuitBoard.getStartingPoint()" because "this.board" is null

@@ -65,7 +65,13 @@ public class CircuitTracer {
 			CircuitBoard board = new CircuitBoard(args[2]);
 			
 			//TODO: run the search for best paths
-			
+		} catch(FileNotFoundException e) {
+			System.out.println(e.toString());
+		}
+		
+		/**
+		 * TODO: Break up the following code into multiple try/catch blocks as needed:
+		 */
 			// Initialize the storage to use either a stack or queue
 			if(args[0].equals("-s")) {
 				stateStore = new Storage<>(Storage.DataStructure.stack);
@@ -73,6 +79,8 @@ public class CircuitTracer {
 				stateStore = new Storage<>(Storage.DataStructure.queue);
 			}
 			
+		try {
+				
 			List<TraceState> bestPaths = new ArrayList<>();	// Single linked list because it is efficient adding to rear and removing from front
 			
 			startingPointX = (int) board.getStartingPoint().getX() - 1;	// Subtract 1 because the Point class starts at index 1
@@ -128,8 +136,6 @@ public class CircuitTracer {
 				}
 			}
 			
-		} catch (FileNotFoundException e) {
-			System.out.println(e.toString());
 		} catch (InvalidFileFormatException e) {
 			System.out.println(e.toString());
 		} catch (IndexOutOfBoundsException e) {
