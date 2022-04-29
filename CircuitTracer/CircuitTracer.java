@@ -60,28 +60,36 @@ public class CircuitTracer {
 			return;
 		}
 		
+		if(args[1].equals("-g")) {	// Inform user if GUI isn't implemented
+			System.out.println("GUI not currently implemented. Please rerun program with -c argument for console output.");
+			return;	// Exit the program
+		}
+		
 		List<TraceState> bestPaths = new ArrayList<>();	// Single linked list because it is efficient adding to rear and removing from front
 
 		try {
 			board = new CircuitBoard(args[2]);	// Read in the CircuitBoard from the given file
+		} catch (InvalidFileFormatException e) {
+			System.out.println(e.toString());
+			return;
+		} catch (FileNotFoundException e) { 
+			System.out.println(e.toString());
+			return;
+		}
 		
-			/* Initialize the storage to use either a stack or queue */
-			if(args[0].equals("-s")) {
-				stateStore = new Storage<>(Storage.DataStructure.stack);
-			} else if(args[0].equals("-q")){
-				stateStore = new Storage<>(Storage.DataStructure.queue);
-			}
-			
-			if(args[1].equals("g")) {
-				System.out.println("GUI not currently implemented. Please rerun program with -c argument for console output.");
-				return;	// Exit the program
-			}
-						
-			startingPointX = (int) board.getStartingPoint().getX();
-			startingPointY = (int) board.getStartingPoint().getY();
-			
+		/* Initialize the storage to use either a stack or queue */
+		if(args[0].equals("-s")) {
+			stateStore = new Storage<>(Storage.DataStructure.stack);
+		} else if(args[0].equals("-q")){
+			stateStore = new Storage<>(Storage.DataStructure.queue);
+		}
+		
+		startingPointX = (int) board.getStartingPoint().getX();
+		startingPointY = (int) board.getStartingPoint().getY();
+		
+		try {
 			/* Make all possible moves from the starting position using the order: right, down, left, up.
-			   Store these initial moves in stateStore */ 
+	   	   Store these initial moves in stateStore */ 
 			if(board.isOpen(startingPointX, startingPointY + 1)) {
 				stateStore.store(new TraceState(board, startingPointX, startingPointY + 1));	// Right
 			}
@@ -94,7 +102,7 @@ public class CircuitTracer {
 			if(board.isOpen(startingPointX - 1, startingPointY)) {
 				stateStore.store(new TraceState(board, startingPointX - 1, startingPointY));	// Up
 			}
-		
+			
 			while(!stateStore.isEmpty()) {
 				
 				TraceState currentTrace = stateStore.retrieve();	// Retrieve one TraceState from the top of the stack or the front of the queue
@@ -125,17 +133,13 @@ public class CircuitTracer {
 					}
 				}
 			}
-		} catch (InvalidFileFormatException e) {
-			System.out.println(e.toString());
 		} catch (OccupiedPositionException e) {
-			System.out.println(e.toString());
-		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 		
-		//TODO: output results to console or GUI, according to specified choice
-		for(TraceState path : bestPaths) {
-			System.out.println(path);
+		// Output best path(s) to console
+		for(TraceState trace : bestPaths) {
+			System.out.println(trace);
 		}
 	}
 } // class CircuitTracer

@@ -585,7 +585,7 @@ public class CircuitTracerTester {
 			} else {
 				System.out.println("Output does NOT match expected content and format.");
 			}
-		} catch (InvalidOutputException e) {
+		} catch (InvalidOutputException e) {	// This catch statement is triggered - why?
 			result = Result.InvalidOutput;
 			System.out.println("Output does NOT match expected content and format.");
 		} catch (Exception e) {

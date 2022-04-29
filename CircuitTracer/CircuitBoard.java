@@ -139,12 +139,7 @@ public class CircuitBoard {
 		 */
 		cols = temp;	
 		
-//			System.out.println(expectedRows + " " + expectedCols);
-//			System.out.println(rows + " " + cols);
-		
-		////////////////////
-		// Populate board //
-		////////////////////  
+		/* Populate board */ 
 		Scanner rowScan = new Scanner(new File(fileName));	// Scan file to get contents
 		rowScan.nextLine();	// Pass the first line
 		
@@ -171,21 +166,6 @@ public class CircuitBoard {
 		endingPoint = new Point(original.endingPoint);
 		rows = original.numRows();
 		cols = original.numCols();
-	}
-
-	/**
-	 * Prints board to the console using a nested for-loop.
-	 *
-	 * @param board a board
-	 */
-	private void printBoard(char[][] board) {
-		for(char[] row : board) {
-			for(char n : row) {
-				System.out.print(n + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();	// Blank line for formatting
 	}
 	
 	/** utility method for copy constructor
