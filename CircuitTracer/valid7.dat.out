@@ -1,2 +1,37 @@
 
-java.lang.NullPointerException: Cannot invoke "CircuitBoard.getStartingPoint()" because "this.board" is null
+O O O O O 
+O 1 T T O 
+O O O T O 
+O O O 2 O 
+O O O O O 
+
+O O O O O 
+O 1 T O O 
+O O T T O 
+O O O 2 O 
+O O O O O 
+
+O O O O O 
+O 1 T O O 
+O O T O O 
+O O T 2 O 
+O O O O O 
+
+O O O O O 
+O 1 O O O 
+O T T T O 
+O O O 2 O 
+O O O O O 
+
+O O O O O 
+O 1 O O O 
+O T T O O 
+O O T 2 O 
+O O O O O 
+
+O O O O O 
+O 1 O O O 
+O T O O O 
+O T T 2 O 
+O O O O O 
+

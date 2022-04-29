@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class CircuitTracer {
 	
-	// Object instance variables
-	private CircuitBoard board;
-	private Storage<TraceState> stateStore;
+	private CircuitBoard board;		// Represents the original board, from which traces are made
+	private Storage<TraceState> stateStore;		/* A Storage object holding TraceState objects, each of which
+												   represents a possible trace from the original board */
 	
-	// Individual X and Y coordinates of the starting and ending points
+	/* Individual X and Y coordinates of the starting and ending points */
 	private int startingPointX;
 	private int startingPointY;
 	
@@ -48,10 +48,10 @@ public class CircuitTracer {
 	 * @throws FileNotFoundException 
 	 */
 	public CircuitTracer(String[] args) {
-		// Validate command line arguments:
+		/* Validate command line arguments */
 		if (args.length != 3) {
 			printUsage();
-			return; // Exits the constructor immediately
+			return; // Exit the constructor
 		} else if(!args[0].equals("-s") && !args[0].equals("-q")) {
 			printUsage();
 			return;
@@ -60,53 +60,45 @@ public class CircuitTracer {
 			return;
 		}
 		
+		List<TraceState> bestPaths = new ArrayList<>();	// Single linked list because it is efficient adding to rear and removing from front
+
 		try {
-			// Read in the CircuitBoard from the given file
-			CircuitBoard board = new CircuitBoard(args[2]);
-			
-			//TODO: run the search for best paths
-		} catch(FileNotFoundException e) {
-			System.out.println(e.toString());
-		}
+			board = new CircuitBoard(args[2]);	// Read in the CircuitBoard from the given file
 		
-		/**
-		 * TODO: Break up the following code into multiple try/catch blocks as needed:
-		 */
-			// Initialize the storage to use either a stack or queue
+			/* Initialize the storage to use either a stack or queue */
 			if(args[0].equals("-s")) {
 				stateStore = new Storage<>(Storage.DataStructure.stack);
 			} else if(args[0].equals("-q")){
 				stateStore = new Storage<>(Storage.DataStructure.queue);
 			}
 			
-		try {
-				
-			List<TraceState> bestPaths = new ArrayList<>();	// Single linked list because it is efficient adding to rear and removing from front
-			
-			startingPointX = (int) board.getStartingPoint().getX() - 1;	// Subtract 1 because the Point class starts at index 1
-			startingPointY = (int) board.getStartingPoint().getY() - 1;
+			if(args[1].equals("g")) {
+				System.out.println("GUI not currently implemented. Please rerun program with -c argument for console output.");
+				return;	// Exit the program
+			}
+						
+			startingPointX = (int) board.getStartingPoint().getX();
+			startingPointY = (int) board.getStartingPoint().getY();
 			
 			/* Make all possible moves from the starting position using the order: right, down, left, up.
-			 * Store these initial moves in stateStore */
+			   Store these initial moves in stateStore */ 
 			if(board.isOpen(startingPointX, startingPointY + 1)) {
-				stateStore.store(new TraceState(board, startingPointX, startingPointY + 1));
+				stateStore.store(new TraceState(board, startingPointX, startingPointY + 1));	// Right
 			}
 			if(board.isOpen(startingPointX + 1, startingPointY)) {
-				stateStore.store(new TraceState(board, startingPointX + 1, startingPointY));
+				stateStore.store(new TraceState(board, startingPointX + 1, startingPointY));	// Down
 			}
 			if(board.isOpen(startingPointX, startingPointY - 1)) {
-				stateStore.store(new TraceState(board, startingPointX, startingPointY - 1));
+				stateStore.store(new TraceState(board, startingPointX, startingPointY - 1));	// Left
 			}
 			if(board.isOpen(startingPointX - 1, startingPointY)) {
-				stateStore.store(new TraceState(board, startingPointX - 1, startingPointY));
+				stateStore.store(new TraceState(board, startingPointX - 1, startingPointY));	// Up
 			}
-			
-//			System.out.println("stateStore size: " + stateStore.size() + " \n");
-//			System.out.println(stateStore.retrieve());
-//			System.out.println(stateStore.retrieve());
-			
+		
 			while(!stateStore.isEmpty()) {
-				TraceState currentTrace = stateStore.retrieve();
+				
+				TraceState currentTrace = stateStore.retrieve();	// Retrieve one TraceState from the top of the stack or the front of the queue
+				
 				if(currentTrace.isComplete()) {
 					if(bestPaths.isEmpty() || currentTrace.pathLength() == bestPaths.get(0).pathLength()) {
 						bestPaths.add(currentTrace);
@@ -115,42 +107,35 @@ public class CircuitTracer {
 						bestPaths.add(currentTrace);
 					} 
 				} else {
-					if(board.isOpen(currentTrace.getRow(), currentTrace.getCol() + 1)) {
-						stateStore.store(new TraceState(currentTrace, currentTrace.getRow(), currentTrace.getCol() + 1));
-						System.out.println("A: ");
+					CircuitBoard currentBoard = currentTrace.getBoard();
+					int currentRow = currentTrace.getRow();
+					int currentCol = currentTrace.getCol();
+					
+					if(currentBoard.isOpen(currentRow, currentCol + 1)) {
+						stateStore.store(new TraceState(currentTrace, currentRow, currentCol + 1) );
 					}
-					if(board.isOpen(currentTrace.getRow() + 1, currentTrace.getCol())) {
-						stateStore.store(new TraceState(currentTrace, currentTrace.getRow() + 1, currentTrace.getCol()));
-						System.out.println("B: ");
+					if(currentBoard.isOpen(currentRow + 1, currentCol)) {
+						stateStore.store(new TraceState(currentTrace, currentRow + 1, currentCol));
 					}
-					if(board.isOpen(currentTrace.getRow(), currentTrace.getCol() - 1)) {
-						stateStore.store(new TraceState(currentTrace, currentTrace.getRow(), currentTrace.getCol() - 1));
-						System.out.println("C: ");
+					if(currentBoard.isOpen(currentRow, currentCol - 1)) {
+						stateStore.store(new TraceState(currentTrace, currentRow, currentCol - 1));
 					}
-					// for some reason this if statement evaluates to true when position contains a T
-					System.out.println(board.isOpen(currentTrace.getRow() - 1, currentTrace.getCol()));
-					if(board.isOpen(currentTrace.getRow() - 1, currentTrace.getCol())) {
-						stateStore.store(new TraceState(currentTrace, currentTrace.getRow() - 1, currentTrace.getCol()));
-						System.out.println("D: ");
+					if(currentBoard.isOpen(currentRow - 1, currentCol)) {
+						stateStore.store(new TraceState(currentTrace, currentRow - 1, currentCol));
 					}
 				}
 			}
-			
 		} catch (InvalidFileFormatException e) {
-			System.out.println(e.toString());
-		} catch (IndexOutOfBoundsException e) {
 			System.out.println(e.toString());
 		} catch (OccupiedPositionException e) {
 			System.out.println(e.toString());
-		} catch (NullPointerException e) {
-			System.out.println(e.toString());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 		
 		//TODO: output results to console or GUI, according to specified choice
-		
+		for(TraceState path : bestPaths) {
+			System.out.println(path);
+		}
 	}
-	
 } // class CircuitTracer
