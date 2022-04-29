@@ -7,9 +7,9 @@
 
 OVERVIEW:
 
- Concisely explain what the program does. If this exceeds a couple
- of sentences, you're going too far. The details go in other sections.
-
+ This program searches a given circuit board for the shortest path
+ between a starting point and an ending point, designated '1' and '2',
+ respectively.
 
 INCLUDED FILES:
 
